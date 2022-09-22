@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
 import { TimeDurationInput } from "react-time-duration-input";
-import "./ListCards/styles/nft.css"
+import "./ListCards/styles/nft.css";
 
 import {
   useConnection,
@@ -41,7 +41,8 @@ const initalizeEscrowHandler = async (
   wallet: WalletContextState,
   minBorrowTime: number,
   maxBorrowTime: number,
-  revenueShare: number
+  revenueShare: number,
+  sellPrice: Number
 ) => {
   //console.log(minBorrowTime, maxBorrowTime, rate, revenueShare);
   const tempAccount = new Keypair();
@@ -52,6 +53,7 @@ const initalizeEscrowHandler = async (
     minBorrowTime: new BN(minBorrowTime),
     maxBorrowTime: new BN(maxBorrowTime),
     ownersRevenueShare: new BN(revenueShare),
+    sellPrice: sellPrice,
     connection,
     newAccount: tempAccount.publicKey,
     ownerTokenAccount: await findAssociatedTokenAddress(
@@ -91,7 +93,7 @@ const cancelEscrowHandler = async (
   });
   return `cancelEscrowTx Completed: ${txId}`;
 };
-const Card = ({ id }) => {
+const Card = ({ id, type }) => {
   const { connection } = useConnection();
   const w = useWallet();
   const { publicKey, sendTransaction } = w;
@@ -106,6 +108,8 @@ const Card = ({ id }) => {
   const [minDuration, setMinDuration] = useState(60);
   const [maxDuration, setMaxDuration] = useState(10 * 60);
   const [revenueShare, setRevenueShare] = useState(0);
+  const [sellPrice, setSellPrice] = useState(0);
+
 
   const fetchMetadata = async () => {
     setErr(null);
@@ -159,7 +163,8 @@ const Card = ({ id }) => {
         w,
         getSeconds(timeScaleMinBorrow, minDuration),
         getSeconds(timeScaleMaxBorrow, maxDuration),
-        revenueShare
+        revenueShare,
+        sellPrice
       );
       setLog(resp);
     } catch (error) {
@@ -195,7 +200,6 @@ const Card = ({ id }) => {
     setErr(null);
   }, []);
 
-
   const [rentType, setChecked] = useState("Fixed Price");
 
   function onChangeValue(event) {
@@ -203,14 +207,18 @@ const Card = ({ id }) => {
     console.log(event.target.value);
   }
 
-  const radiobtn ='Fixed Price';
+  const radiobtn = "Fixed Price";
 
   return (
     <div className="container mx-auto center ">
       <div className="flex w-70 m-auto">
         <div className="flex-auto card z-70 w-32 max-w-32 bg-primary text-primary-content shadow-2xl new-card">
           <div className="card-body d-block">
-            <h1 className="card-title font-size-3">Renting List Details</h1>
+            {type === "sell" ? (
+              <h1 className="card-title"> Selling Details </h1>
+            ) : (
+              <h1 className="card-title"> Renting Details </h1>
+            )}
             <div>
               <img src="" alt="" className="token-img" onClick={""}></img>
             </div>
@@ -218,169 +226,240 @@ const Card = ({ id }) => {
               <div> Token Id : </div>
               <div> {id}</div>
             </div>
-            <div>
+            <div></div>
 
-            </div>
             <div className="form-control flex gap-4 w-full">
-              {/* Minimum Rent Duration */}
-              <div className="d-flex">
-                <h3 className="head w-30 ">Minimum Rent Duration</h3>
-                <input
-                  type="number"
-                  placeholder="Minimum Rent Duration"
-                  className="input input-bordered input-accent"
-                  onChange={(e) => setMinDuration(parseInt(e.target.value))}
-                />
-                <select name="Unit"
-                  className="select select-info  "
-                  onChange={(e) => {
-                    setTimeScaleMinBorrow(parseInt(e.target.value));
-                  }}
-                >
-                  <option value="" disabled selected hidden>Unit</option>
-                  <option value={0}>Seconds</option>
-                  <option value={1}>Minutes</option>
-                  <option value={2}>Hours</option>
-                  <option value={3}>Days</option>
-                  <option value={4}>Weeks</option>
-                  <option value={5}>Months</option>
-                </select>
-              </div>
+            {type === "sell" ? (
+              <>
+               <div className="d-flex" FixedPrice>
+                          <h3 className="head w-30">Rent Price</h3>
+                          <input
+                            type="number"
+                            placeholder="Rate Price"
+                            className="input input-bordered input-accent "
+                            onChange={(e) =>
+                              setSellPrice(parseFloat(e.target.value))
+                            }
+                          />
+                          </div>
+                          </>
+            ) : (
+              <>
+                
+                  {/* Minimum Rent Duration */}
+                  <div className="d-flex">
+                    <h3 className="head w-30 ">Minimum Rent Duration</h3>
+                    <input
+                      type="number"
+                      placeholder="Minimum Rent Duration"
+                      className="input input-bordered input-accent"
+                      onChange={(e) => setMinDuration(parseInt(e.target.value))}
+                    />
+                    <select
+                      name="Unit"
+                      className="select select-info  "
+                      onChange={(e) => {
+                        setTimeScaleMinBorrow(parseInt(e.target.value));
+                      }}
+                    >
+                      <option value="" disabled selected hidden>
+                        Unit
+                      </option>
+                      <option value={0}>Seconds</option>
+                      <option value={1}>Minutes</option>
+                      <option value={2}>Hours</option>
+                      <option value={3}>Days</option>
+                      <option value={4}>Weeks</option>
+                      <option value={5}>Months</option>
+                    </select>
+                  </div>
 
-              {/* Maximum Rent Duration */}
+                  {/* Maximum Rent Duration */}
 
-              <div className="d-flex">
-                <h3 className="head w-30 ">Maximum Rent Duration</h3>
-                <input
-                  type="number"
-                  placeholder="Maximum Rent Duration"
-                  className=" input input-bordered input-accent"
-                  onChange={(e) => setMaxDuration(parseInt(e.target.value))}
-                />
-                <select name="Unit"
-                  className="select select-info"
-                  onChange={(e) => {
-                    setTimeScaleMaxBorrow(parseInt(e.target.value));
-                  }}
-                >
-                  <option value="" disabled selected hidden>Unit</option>
-                  <option value={0}>Seconds</option>
-                  <option value={1}>Minutes</option>
-                  <option value={2}>Hours</option>
-                  <option value={3}>Days</option>
-                  <option value={4}>Weeks</option>
-                  <option value={5}>Months</option>
-                </select>
-              </div>
+                  <div className="d-flex">
+                    <h3 className="head w-30 ">Maximum Rent Duration</h3>
+                    <input
+                      type="number"
+                      placeholder="Maximum Rent Duration"
+                      className=" input input-bordered input-accent"
+                      onChange={(e) => setMaxDuration(parseInt(e.target.value))}
+                    />
+                    <select
+                      name="Unit"
+                      className="select select-info"
+                      onChange={(e) => {
+                        setTimeScaleMaxBorrow(parseInt(e.target.value));
+                      }}
+                    >
+                      <option value="" disabled selected hidden>
+                        Unit
+                      </option>
+                      <option value={0}>Seconds</option>
+                      <option value={1}>Minutes</option>
+                      <option value={2}>Hours</option>
+                      <option value={3}>Days</option>
+                      <option value={4}>Weeks</option>
+                      <option value={5}>Months</option>
+                    </select>
+                  </div>
 
-              {/* Rent Contract Type */}
+                 
+                  {/* Rent Contract Type */}
 
-              <div className="d-flex">
-                <h3 className="head w-30">Rent Contract Type</h3>
-                <div onChange={onChangeValue}>
-                  <input type="radio" className="input-mar" name="rentType" value="FixedPrice" checked={rentType === "FixedPrice"} onChange={(e) => {
-                    setChecked(e.target.value)
-                    console.log("show task details")
-                  }} /> Fixed Price
-                  <input type="radio" className="input-mar" name="rentType" value="RevenueSharing" checked={rentType === "RevenueSharing"} onChange={(e) => {
-                    setChecked(e.target.value)
-                    console.log("show this task details")
-                  }} /> Revenue Sharing
-                  <input type="radio" className="input-mar" name="rentType" value="Hybrid" checked={rentType === "Hybrid"} /> Hybrid
-            
-                </div>
-              </div>
+                  <div className="d-flex">
+                    <h3 className="head w-30">Rent Contract Type</h3>
+                    <div onChange={onChangeValue}>
+                      <input
+                        type="radio"
+                        className="input-mar"
+                        name="rentType"
+                        value="FixedPrice"
+                        checked={rentType === "FixedPrice"}
+                        onChange={(e) => {
+                          setChecked(e.target.value);
+                          console.log("show task details");
+                        }}
+                      />{" "}
+                      Fixed Price
+                      <input
+                        type="radio"
+                        className="input-mar"
+                        name="rentType"
+                        value="RevenueSharing"
+                        checked={rentType === "RevenueSharing"}
+                        onChange={(e) => {
+                          setChecked(e.target.value);
+                          console.log("show this task details");
+                        }}
+                      />{" "}
+                      Revenue Sharing
+                      <input
+                        type="radio"
+                        className="input-mar"
+                        name="rentType"
+                        value="Hybrid"
+                        checked={rentType === "Hybrid"}
+                      />{" "}
+                      Hybrid
+                    </div>
+                  </div>
 
-              {/* Rent Price */}
-              {(function(){
-              if (rentType === "FixedPrice" || rentType === "Hybrid" ) {
-               return  <div className="d-flex" FixedPrice>
-                <h3 className="head w-30">Rent Price</h3>
-                <input
-                  type="number"
-                  placeholder="Rate Price"
-                  className="input input-bordered input-accent "
-                  onChange={(e) => setRate(parseFloat(e.target.value))}
-                />
-                <select name="Unit"
-                  className="select select-info  "
-                  onChange={(e) => {
-                    setTimeScaleMaxBorrow(parseInt(e.target.value));
-                  }}
-                >
-                  <option value="" disabled selected hidden>Unit</option>
-                  <option value={0}>Seconds</option>
-                  <option value={1}>Minutes</option>
-                  <option value={2}>Hours</option>
-                  <option value={3}>Days</option>
-                  <option value={4}>Weeks</option>
-                  <option value={5}>Months</option>
-                </select>
-                <select
-                  className="select select-info  "
-                  onChange={(e) => {""}}
-                >
-                  <option value="" disabled selected hidden>Curreny</option>
-                  <option value={0}>SOL</option>
-                  <option value={1}>USDC</option>
-                </select>
-              </div>
-             }})()}
+                  {/* Rent Price */}
+                  {(function () {
+                    if (rentType === "FixedPrice" || rentType === "Hybrid") {
+                      return (
+                        <div className="d-flex" FixedPrice>
+                          <h3 className="head w-30">Rent Price</h3>
+                          <input
+                            type="number"
+                            placeholder="Rate Price"
+                            className="input input-bordered input-accent "
+                            onChange={(e) =>
+                              setRate(parseFloat(e.target.value))
+                            }
+                          />
+                          <select
+                            name="Unit"
+                            className="select select-info  "
+                            onChange={(e) => {
+                              setTimeScaleMaxBorrow(parseInt(e.target.value));
+                            }}
+                          >
+                            <option value="" disabled selected hidden>
+                              Unit
+                            </option>
+                            <option value={0}>Seconds</option>
+                            <option value={1}>Minutes</option>
+                            <option value={2}>Hours</option>
+                            <option value={3}>Days</option>
+                            <option value={4}>Weeks</option>
+                            <option value={5}>Months</option>
+                          </select>
+                          <select
+                            className="select select-info  "
+                            onChange={(e) => {
+                              "";
+                            }}
+                          >
+                            <option value="" disabled selected hidden>
+                              Curreny
+                            </option>
+                            <option value={0}>SOL</option>
+                            <option value={1}>USDC</option>
+                          </select>
+                        </div>
+                      );
+                    }
+                  })()}
 
-              {/* Revenue Split */}
+                  {/* Revenue Split */}
 
-              {(function(){
-              if (rentType === "RevenueSharing" || rentType === "Hybrid" ) {
-               return  <div className="d-flex">
-                <h3 className="head w-30">Revenue Split</h3>
-                <input
-                  type="number"
-                  placeholder="Owner share %"
-                  className="input input-bordered input-accent w-full "
-                  onChange={(e) => setRevenueShare(parseInt(e.target.value))}
-                />
-                <input
-                type="number"
-                placeholder="Borrower Share % "
-                className="input input-bordered input-accent w-full "
-                onChange={""}
-              />
+                  {(function () {
+                    if (
+                      rentType === "RevenueSharing" ||
+                      rentType === "Hybrid"
+                    ) {
+                      return (
+                        <div className="d-flex">
+                          <h3 className="head w-30">Revenue Split</h3>
+                          <input
+                            type="number"
+                            placeholder="Owner share %"
+                            className="input input-bordered input-accent w-full "
+                            onChange={(e) =>
+                              setRevenueShare(parseInt(e.target.value))
+                            }
+                          />
+                          <input
+                            type="number"
+                            placeholder="Borrower Share % "
+                            className="input input-bordered input-accent w-full "
+                            onChange={""}
+                          />
+                        </div>
+                      );
+                    }
+                  })()}
 
-              </div>
-            }})()}
+                  {/* Revocation Trigger */}
 
-              {/* Revocation Trigger */}
-
-              {(function(){
-              if (rentType === "Hybrid") {
-               return <div className="d-flex">
-                <h3 className="head w-30">Revocation Trigger</h3>
-                <input
-                  type="number"
-                  placeholder="Reward"
-                  className="input input-bordered input-accent w-full "
-                  onChange={""}
-                />
-                <select
-                  className="select select-info  "
-                  onChange={(e) => {""}}
-                >
-                  <option value="" disabled selected hidden>Curreny</option>
-                  <option value={0}>SOL</option>
-                  <option value={1}>USDC</option>
-                </select>
-              <p style={{margin: 'auto 1px auto 6px'}}>in</p>
-              <input
-                type="number"
-                placeholder="Time Period"
-                className="input input-bordered input-accent w-full "
-                onChange={""}
-              />
-
-
-              </div>
-            }})()}
-              {/* <label className="label">
+                  {(function () {
+                    if (rentType === "Hybrid") {
+                      return (
+                        <div className="d-flex">
+                          <h3 className="head w-30">Revocation Trigger</h3>
+                          <input
+                            type="number"
+                            placeholder="Reward"
+                            className="input input-bordered input-accent w-full "
+                            onChange={""}
+                          />
+                          <select
+                            className="select select-info  "
+                            onChange={(e) => {
+                              "";
+                            }}
+                          >
+                            <option value="" disabled selected hidden>
+                              Curreny
+                            </option>
+                            <option value={0}>SOL</option>
+                            <option value={1}>USDC</option>
+                          </select>
+                          <p style={{ margin: "auto 1px auto 6px" }}>in</p>
+                          <input
+                            type="number"
+                            placeholder="Time Period"
+                            className="input input-bordered input-accent w-full "
+                            onChange={""}
+                          />
+                        </div>
+                      );
+                    }
+                  })()}
+                   </>
+            )}
+                  {/* <label className="label">
                 <span className="label-text">Unit</span>
               </label>
               <select
@@ -399,7 +478,7 @@ const Card = ({ id }) => {
                 <option value={5}>Months</option>
               </select> */}
 
-              {/* <input
+                  {/* <input
                 type="number"
                 placeholder="Minimum Rent Duration"
                 className=" flex-auto input input-bordered input-accent w-full "
@@ -409,7 +488,7 @@ const Card = ({ id }) => {
                 <span className="label-text">Unit</span>
               </label> */}
 
-              {/* <select
+                  {/* <select
                 className="select select-info  "
                 onChange={(e) => {
                   setTimeScaleMinBorrow(parseInt(e.target.value));
@@ -424,16 +503,16 @@ const Card = ({ id }) => {
                 <option value={4}>Weeks</option>
                 <option value={5}>Months</option>
               </select> */}
-              {/* <input
+                  {/* <input
                 type="number"
                 placeholder="Maximum Rent Duration"
                 className=" flex-auto input input-bordered input-accent w-full "
                 onChange={(e) => setMaxDuration(parseInt(e.target.value))}
               /> */}
-              {/* <label className="label">
+                  {/* <label className="label">
                 <span className="label-text">Unit</span>
               </label> */}
-              {/* <select
+                  {/* <select
                 className="select select-info  "
                 onChange={(e) => {
                   setTimeScaleMaxBorrow(parseInt(e.target.value));
@@ -448,8 +527,8 @@ const Card = ({ id }) => {
                 <option value={4}>Weeks</option>
                 <option value={5}>Months</option>
               </select> */}
-
-            </div>
+                </div>{" "}
+              
             <div className="justify-end card-actions justify-center">
               <button className="btn" onClick={initalizeEscrow}>
                 Initialize Token Listing

@@ -23,7 +23,7 @@ import {
   findAssociatedTokenAddress,
   sendTransaction,
   cancelEscrowTx,
-} from "stream-nft-sdk";
+} from "stream-nft";
 import { addDocument } from "../services/firebase";
 import { getRate, getSeconds } from "../services/common";
 const getMetadata = async (connection: Connection, token: string) => {

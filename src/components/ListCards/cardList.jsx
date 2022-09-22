@@ -9,6 +9,7 @@ const CardList = ({ list, type = "horizontal"}) => {
 
   const [openList, setOpenList] = useState(true);
   const [listItem, setListItem] = useState({});
+  const [selectionType, setSelectionType] = useState('lend')
   const openlist = (item) => {
     setOpenList(false)
     setListItem(item)
@@ -16,6 +17,12 @@ const CardList = ({ list, type = "horizontal"}) => {
     if(buttonValue === "Withdraw"){
       console.log(item.id)
     }
+  }
+  const openSell = (item) => {
+    setOpenList(false)
+    setListItem(item)
+    setSelectionType('sell')
+    // Write log for nft withdraw here
   }
   const open = () => {
     setOpenList(true)
@@ -35,11 +42,12 @@ const CardList = ({ list, type = "horizontal"}) => {
             buttonValue={item.buttonValue}
             price={item.data.sellerFeeBasisPoints}
             onClick={()=>openlist(item)}
+            onClickSell={()=>openSell(item)}
             key={index}
           />
         </>
       ))}
-    </div> ) :(<CreateListing id={listItem.id} onClick={open}/> )
+    </div> ) :(<CreateListing id={listItem.id} onClick={open} type={selectionType}/> )
 }
     </>
   );

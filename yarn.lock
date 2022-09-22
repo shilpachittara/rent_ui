@@ -15165,6 +15165,16 @@
     "bn.js" "^5.2.0"
     "buffer-layout" "^1.2.2"
 
+"stream-nft@^1.0.1":
+  "integrity" "sha512-FcFBqTGnEHP2d7Q2J5og7XV2+gHXbflS33txx7y6rBLp3TZhYJWmJqFw61gk23PB2oB+NNYSRX1naxgBhWxykw=="
+  "resolved" "https://registry.npmjs.org/stream-nft/-/stream-nft-1.0.1.tgz"
+  "version" "1.0.1"
+  dependencies:
+    "@solana/spl-token" "^0.1.8"
+    "@solana/web3.js" "^1.29.1"
+    "bn.js" "^5.2.0"
+    "buffer-layout" "^1.2.2"
+
 "stream@npm:stream-browserify":
   "integrity" "sha512-H73RAHsVBapbim0tU2JwwOiXUj+fikfiaoYAKHF3VJfA0pe2BCzkhAHBlLG6REzE+2WNZcxOXjK7lkso+9euLA=="
   "resolved" "https://registry.npmjs.org/stream-browserify/-/stream-browserify-3.0.0.tgz"

@@ -3,11 +3,11 @@
 import React, { useState } from "react";
 import Card from "./nft";
 
-const CreateListing = ({ id , onClick}) => {
+const CreateListing = ({ id ,type, onClick}) => {
   return (
     <>
       <div className="container mx-auto center">
-        <Card id={id} />
+        <Card id={id} type={type}/>
       </div>
 
       <button className="btn btn-left" onClick={onClick}>

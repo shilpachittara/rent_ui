@@ -8,13 +8,25 @@ import BorrowRented from "../borrowRented";
 const CardList = ({ list, type = "horizontal"}) => {
 
   const [openList, setOpenList] = useState(true);
+  const [openSelected, setOpenSelected] = useState();
   const [listItem, setListItem] = useState({});
   const openlist = (item) => {
     setOpenList(false)
     setListItem(item)
+    setOpenSelected('rent')
+  }
+  const openbuy = (item) => {
+    setOpenList(false)
+    setListItem(item)
+    setOpenSelected('buy')
   }
   const open = () => {
     setOpenList(true)
+  }
+  const readbook =(item) => {
+    if(item.data.name === "Murakumogiri"){
+      window.open("https://www.google.com", '_blank', 'noopener,noreferrer');
+    }
   }
   return (
     <> {openList?
@@ -31,11 +43,13 @@ const CardList = ({ list, type = "horizontal"}) => {
             buttonValue={item.listed ? "withdraw" : "Rent"}
             price={item.data.sellerFeeBasisPoints}
             onClick={()=>openlist(item)}
+            onClickBuy={()=>openbuy(item)}
+            getBookLink={()=>readbook(item)}
             key={index}
           />
         </>
       ))}
-    </div> ) :(<BorrowRented id={listItem.id} onClick={open}/> )
+    </div> ) :(<BorrowRented id={listItem.id} onClick={open} selection={openSelected} type={openSelected}/> )
 }
     </>
   );

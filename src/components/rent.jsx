@@ -34,14 +34,17 @@ const rentInit = async (
   token: PublicKey,
   wallet: WalletContextState,
   amount: number,
-  time: number
+  time: number,
+  buy: Number
 ) => {
+  console.log(buy);
   const resp = await rentTx({
     borrower: wallet,
     token,
     programId: config.DEVNET_PROGRAM_ID,
     amount: new BN(amount),
     time: new BN(time),
+    buy: buy,
     connection,
   });
   const txId = await sendTransaction({
@@ -91,7 +94,7 @@ const cancelRent = async (
     // const associatedPdaTokenAddress = await (
     //   await Token.getAssociatedTokenAddress(currentState.getPda())
     // ).address;
-    console.log( currentState.getPda().toBase58())
+    console.log(currentState.getPda().toBase58());
     const associatedPdaTokenAddress = await connection.getTokenAccountsByOwner(
       currentState.getPda(),
       {
@@ -109,7 +112,7 @@ const cancelRent = async (
       token,
       withdrawer: wallet,
       // adding a single spl token associated pda to share revenue on
-      associatedPdaTokenAddress:associatedPdaTokenAddress.value[0].pubkey,
+      associatedPdaTokenAddress: associatedPdaTokenAddress.value[0].pubkey,
       associatedBorrowerTokenAddress,
       associatedOwnersTokenAddress,
       programId: config.DEVNET_PROGRAM_ID,
@@ -128,11 +131,14 @@ const cancelRent = async (
     console.log("err", err);
   }
 };
-const Rent = ({ id }) => {
+
+// TO DO add logic for buy
+const Rent = ({ id, selection, type }) => {
   const { connection } = useConnection();
   const w = useWallet();
   const { publicKey, sendTransaction } = w;
   const [token, setToken] = useState(null);
+  const [rentFlow, setRentFlow] = useState(false);
   const [err, setErr] = useState(null);
   const [log, setLog] = useState(null);
   const [bill, setBill] = useState(0);
@@ -140,6 +146,9 @@ const Rent = ({ id }) => {
   const [timeScale, setScale] = useState(0);
   const [maxMinConstraint, setMaxMinConstraint] = useState("");
   const [rate, setRate] = useState(0);
+  const [buy, setBuy] = useState(0);
+
+
   const initRent = async () => {
     setToken(id);
     setErr(null);
@@ -152,16 +161,21 @@ const Rent = ({ id }) => {
           parseInt(time) *
           LAMPORTS_PER_SOL
       );
-      console.log(amount.toNumber());
+      //console.log(amount.toNumber());
 
       const BNtime = new BN(time);
-      console.log(BNtime.toNumber());
+      //console.log(BNtime.toNumber());
+
+      if(type === 'buy'){
+        setBuy(1);
+      }
       const resp = await rentInit(
         connection,
         new PublicKey(token),
         w,
         amount,
-        BNtime
+        BNtime,
+        buy
       );
       setLog(resp);
     } catch (error) {
@@ -214,6 +228,9 @@ const Rent = ({ id }) => {
     );
   };
   useEffect(() => {
+    if ("rent" === selection) {
+      setRentFlow(true);
+    }
     setToken(id);
     setConstraints(id);
     setErr(null);
@@ -223,53 +240,78 @@ const Rent = ({ id }) => {
       <div className="flex">
         <div className="flex-auto card w-96 max-w-1/2 bg-base-100 text-primary-content shadow-2xl">
           <div className="card-body">
-            <h2 className="card-title">borrow SPL-TOKEN</h2>
+            {type === "rent" ? (
+              <h2 className="card-title"> RENT </h2>
+            ) : (
+              <h2 className="card-title"> BUY </h2>
+            )}
             <div className="flex gap-4">
               <div> Token Id</div>
               <div> {id}</div>
 
-              <div>Duration</div>
-              <div> {maxMinConstraint}</div>
+              {type === "rent" ? (
+                <>
+                  <div>Duration</div>
+                  <div> {maxMinConstraint}</div>
+                </>
+              ) : (
+                ""
+              )}
 
               <div>Rate</div>
               <div> {rate} SOL/s</div>
 
-              <input
-                type="number"
-                onChange={(e) => {
-                  //setTime(parseInt(e.target.value));
-                  calculateRent(e);
-                }}
-                placeholder="Duration"
-                className=" flex-auto input input-bordered input-accent  max-w-xs s"
-              />
-              <label className="label">
-                <span className="label-text">Unit</span>
-              </label>
-              <select
-                className="select select-info  "
-                onChange={(e) => {
-                  setScale(parseInt(e.target.value));
-                }}
-              >
-                <option value={0}>Seconds</option>
-                <option value={1} defaultValue={true}>
-                  Minutes
-                </option>
-                <option value={2}>Hours</option>
-                <option value={3}>Days</option>
-                <option value={4}>Weeks</option>
-                <option value={5}>Months</option>
-              </select>
+              {type === "rent" ? (
+                <>
+                  <input
+                    type="number"
+                    onChange={(e) => {
+                      //setTime(parseInt(e.target.value));
+                      calculateRent(e);
+                    }}
+                    placeholder="Duration"
+                    className=" flex-auto input input-bordered input-accent  max-w-xs s"
+                  />
+                  <label className="label">
+                    <span className="label-text">Unit</span>
+                  </label>
+                  <select
+                    className="select select-info  "
+                    onChange={(e) => {
+                      setScale(parseInt(e.target.value));
+                    }}
+                  >
+                    <option value={0}>Seconds</option>
+                    <option value={1} defaultValue={true}>
+                      Minutes
+                    </option>
+                    <option value={2}>Hours</option>
+                    <option value={3}>Days</option>
+                    <option value={4}>Weeks</option>
+                    <option value={5}>Months</option>
+                  </select>
+                </>
+              ) : (
+                ""
+              )}
             </div>
-            <div className="justify-end card-actions">
-              <button className="btn" onClick={initRent}>
-                borrow It for {bill} SOL!!!
-              </button>
-              <button className="btn" onClick={cancel}>
-                return borrowed nft
-              </button>
-            </div>
+
+            {rentFlow ? (
+              <div className="justify-end card-actions">
+                <button className="btn" onClick={initRent}>
+                  borrow It for {bill} SOL!!!
+                </button>
+                <button className="btn" onClick={cancel}>
+                  return borrowed nft
+                </button>
+              </div>
+            ) : (
+              <div className="justify-end card-actions">
+                <button className="btn" onClick={initRent}>
+                  Buy It for {rate} SOL!!!
+                </button>
+              </div>
+            )}
             {err ? (
               <div className="alert alert-error shadow-lg">
                 <div>

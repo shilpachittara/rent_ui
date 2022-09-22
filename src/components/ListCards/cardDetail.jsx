@@ -22,9 +22,12 @@ const cardDetail = ({
   likeCount,
   gradient,
   onClick,
+  onClickSell
 }) => {
   const [isLike, setIsLike] = useState(false);
   const [colors, setColors] = useState([]);
+  const [sell, setSell] = useState(false);
+
 
   const like = () => setIsLike(!isLike);
 
@@ -80,7 +83,16 @@ const cardDetail = ({
               <p className="name">{status}</p>
             </div>
 
-            <> {buttonValue ? (
+            <>  {sell? (
+            <div className="buttons">
+            <button className="buy-now" onClickSell={onClickSell}>Sell</button> 
+            </div>   ) : (
+              <></>
+            )
+      }
+      </>
+            <> 
+            {buttonValue ? (
               <div className="buttons" >
                 <button className="buy-now" type="button"
                   onClick={handleOpen}>

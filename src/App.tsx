@@ -118,7 +118,7 @@ function App() {
             {/******************** Search ****************/}
             <div className="main">
               <div></div>
-              <div className="search">
+              {/*<div className="search">
                 <SearchBar
                   onChange={(text) => console.log(text)}
                   onFocus={() => console.log('focused')}
@@ -129,9 +129,9 @@ function App() {
                   onClear={() => console.log('closed')}
                 //  value='Search' 
                 />
-              </div>
+              </div> */}
               {/******************** End Search ****************/}
-              <div className="token-main">
+              {/* <div className="token-main">
                 <ReactiveButton
                   idleText={'Listed Token'}
                   loadingText={'Loading'}
@@ -146,6 +146,7 @@ function App() {
                   className={'token-btn'}
                 />
               </div>
+              */}
             </div>
             {listActive === 2 ? (
               <OwnedNft />

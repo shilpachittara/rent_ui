@@ -13,7 +13,7 @@ import {
   config,
   getWalletTokens,
   QueryWalletTokensStatus,
-} from "stream-nft-sdk";
+} from "stream-nft";
 import { deleteListing, fetchListings } from "../services/firebase";
 import {
   getParsedNftAccountsByOwner,

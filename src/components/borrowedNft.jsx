@@ -6,7 +6,7 @@ import {
 } from "@solana/wallet-adapter-react";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import React, { useEffect, useState } from "react";
-import { queryTokenState, config, getAllListedTokens } from "stream-nft-sdk";
+import { queryTokenState, config, getAllListedTokens } from "stream-nft";
 import { deleteListing, fetchListings } from "../services/firebase";
 import { getParsedNftAccountsByOwner } from "@nfteyez/sol-rayz";
 import { programs } from "@metaplex/js";
@@ -53,7 +53,7 @@ function BorrowedNft() {
           connection,
           listings[i].state.tokenPubkey
         );
-        console.log(state.getState().state.toNumber());
+        //console.log(state.getState().state.toNumber());
         if (state.getState().state.toNumber() === 1) {
           const dataSolana = await getData(
             connection,
@@ -69,7 +69,7 @@ function BorrowedNft() {
       }
     }
 
-    console.log("value:", listArr);
+    //console.log("value:", listArr);
     try {
       let nftData = listArr;
       var data = Object.keys(nftData).map((key) => nftData[key]);
@@ -80,7 +80,7 @@ function BorrowedNft() {
         val = { ...val, id: listArr[i].mint };
         arr.push({ listed: true, ...val });
       }
-      console.log(arr);
+      //console.log(arr);
       setListObject(arr);
     } catch (error) {
       console.log(error);
