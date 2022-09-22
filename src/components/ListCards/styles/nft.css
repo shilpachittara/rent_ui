@@ -1,0 +1,66 @@
+.d-flex{
+    display: flex;
+}
+.new-card{
+    height: fit-content !important;
+    max-height: 674px;
+    cursor: auto;
+}
+.card-width{
+    width: 70%;
+    padding: 5rem;
+    margin: auto;
+}
+.head{
+    padding: 1px 2rem;
+    margin: auto 0;
+}
+.input-mar{
+    margin: 0 0 0 3rem
+};
+.select-info{
+    width: 15%;
+    margin: 0 5px;
+}
+.input{
+    width: 33%;
+    /* flex: 1 1 auto; */
+    margin: 0 5px;
+}
+.flex-auto {
+    flex: 1 1 auto;
+}
+.w-30{
+    width: 30%;
+}
+.w-70{
+    width: 70%;
+}
+.m-auto{
+    margin: auto;
+}
+.z-70{
+    zoom: 80%;
+    margin: 0px !important;
+}
+.justify-center{
+    justify-content: center !important;
+    margin-top: 1.5rem;
+}
+.token-img{
+    width: 8em;
+    height: 8rem;
+    /* border: 1px solid white; */
+    margin: auto;
+    margin-top: -18px;
+    cursor: pointer;
+}
+.listing-header{
+    margin: 1rem !important;
+}
+.d-block{
+    display: block;
+}
+.font-size-3{
+    font-size: 1.75rem;
+}

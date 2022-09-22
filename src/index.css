@@ -1,0 +1,82 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  @apply font-poppins;
+  @apply h-screen;
+}
+@layer components {
+  .card {
+    margin: 20px;
+  }
+  .npm {
+    margin: 5px;
+    border-radius: 0px !important;
+    background-color: #df272d !important;
+    color: white;
+    border: 0px;
+  }
+}
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
+    monospace;
+}
+#root {
+  @apply h-screen;
+}
+.btn {
+  @apply rounded-full;
+}
+[data-theme="dark"] .custom-green {
+  background-color: #36d1a5 !important;
+}
+/* EXTRA */
+.col-lg{
+  width: 100%;
+}
+.margin{
+  margin-left: 15px;
+  margin-right: 15px;
+}
+/* .col-md{
+  width: 40%;
+}
+.top-head{
+  display: table-cell;;
+} */
+
+.main{
+  width: 100%;
+  display: flex;
+  padding: 0px 3rem;
+  justify-content: space-between;
+}
+.col-20{
+  width: 20%;
+}
+.col-80{
+  width: 109%;
+  justify-content: center;
+  background-color: transparent;
+
+}
+.top-btn{
+justify-content: end;
+}
+.search{
+  margin: 1rem 0 1rem 5rem;
+  width: 40%;
+  
+}
+.token-btn{
+  border-radius: 5px;
+  color: #3A5BA0;
+  border-right: 1px solid black;
+  padding: 12px 2rem !important;
+  margin-right: 2px !important;
+}
+.token-main{
+  display: flex;
+  margin-top: 1rem;
+}
