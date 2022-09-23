@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable react/prop-types */
 import { Token, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import {
@@ -20,7 +21,7 @@ import {
   withdrawTx,
   rentTx,
   KeyPairWallet,
-} from "stream-nft-sdk";
+} from "stream-nft";
 import { getSeconds } from "../services/common";
 const getMetadata = async (connection: Connection, token: string) => {
   return await queryTokenState({
@@ -37,14 +38,14 @@ const rentInit = async (
   time: number,
   buy: Number
 ) => {
-  console.log(buy);
+
   const resp = await rentTx({
     borrower: wallet,
     token,
     programId: config.DEVNET_PROGRAM_ID,
     amount: new BN(amount),
     time: new BN(time),
-    buy: buy,
+    buy: new BN(buy),
     connection,
   });
   const txId = await sendTransaction({
@@ -94,19 +95,19 @@ const cancelRent = async (
     // const associatedPdaTokenAddress = await (
     //   await Token.getAssociatedTokenAddress(currentState.getPda())
     // ).address;
-    console.log(currentState.getPda().toBase58());
+    //console.log(currentState.getPda().toBase58());
     const associatedPdaTokenAddress = await connection.getTokenAccountsByOwner(
       currentState.getPda(),
       {
         mint: new PublicKey("8dv9xBuvv7czsX32tnkafSfi9d7Bh5y4Ly5stdGjEg5Z"),
       }
     );
-    console.log("here");
+    /*console.log("here");
     console.log(
       associatedOwnersTokenAddress,
       associatedBorrowerTokenAddress,
       associatedPdaTokenAddress
-    );
+    );*/
 
     const resp = await withdrawTx({
       token,
@@ -148,14 +149,13 @@ const Rent = ({ id, selection, type }) => {
   const [rate, setRate] = useState(0);
   const [buy, setBuy] = useState(0);
 
-
   const initRent = async () => {
     setToken(id);
     setErr(null);
     setLog(null);
     try {
       const currentState = await getMetadata(connection, token);
-      console.log(parseInt(time));
+      //console.log(parseInt(time));
       const amount = new BN(
         (currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL) *
           parseInt(time) *
@@ -166,9 +166,6 @@ const Rent = ({ id, selection, type }) => {
       const BNtime = new BN(time);
       //console.log(BNtime.toNumber());
 
-      if(type === 'buy'){
-        setBuy(1);
-      }
       const resp = await rentInit(
         connection,
         new PublicKey(token),
@@ -185,7 +182,7 @@ const Rent = ({ id, selection, type }) => {
   };
   const calculateRent = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
-      console.log(e.target.value);
+      //console.log(e.target.value);
       setBill(0);
       setToken(id);
       setTime(getSeconds(timeScale, e.target.value));
@@ -207,7 +204,7 @@ const Rent = ({ id, selection, type }) => {
       return;
     }
     if (!token) setErr("no token found");
-    console.log(publicKey.toBase58());
+    //console.log(publicKey.toBase58());
     try {
       const resp = await cancelRent(connection, new PublicKey(token), w);
       setLog(resp);
@@ -230,6 +227,9 @@ const Rent = ({ id, selection, type }) => {
   useEffect(() => {
     if ("rent" === selection) {
       setRentFlow(true);
+    }
+    if ("buy" === type) {
+      setBuy(1);
     }
     setToken(id);
     setConstraints(id);
