@@ -48,24 +48,26 @@ function Marketplace() {
     //onsole.log(listings[0].state.tokenPubkey)
     let listArr = [];
     for (let i in listings) {
-      try {
-        const state = await getMetadata(
-          connection,
-          listings[i].state.tokenPubkey
-        );
-        //console.log(state.getState().state.toNumber());
-        if (state.getState().state.toNumber() === 0) {
-          const dataSolana = await getData(
+      if (listings[i].data && listings[i] && listings[i].data.symbol === "Ebook") {
+        try {
+          const state = await getMetadata(
             connection,
             listings[i].state.tokenPubkey
           );
-          listArr.push(dataSolana);
-          setids((ids) => [
-            ...new Set([...ids, listings[i].state.tokenPubkey]),
-          ]);
+          //console.log(state.getState().state.toNumber());
+          if (state.getState().state.toNumber() === 0) {
+            const dataSolana = await getData(
+              connection,
+              listings[i].state.tokenPubkey
+            );
+            listArr.push(dataSolana);
+            setids((ids) => [
+              ...new Set([...ids, listings[i].state.tokenPubkey]),
+            ]);
+          }
+        } catch (e) {
+          await deleteListing(listings[i].state.tokenPubkey);
         }
-      } catch (e) {
-        await deleteListing(listings[i].state.tokenPubkey);
       }
     }
 

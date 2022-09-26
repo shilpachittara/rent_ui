@@ -39,6 +39,13 @@ function ownedNft() {
     );
     return tokenmeta.data;
   };
+
+  const getMetaData = async (uri) => {
+    // console.log("uri : ", uri);
+    const response = await fetch(uri);
+    const jsonData = await response.json();
+    return jsonData;
+  };
   const w = useWallet();
   const { publicKey, sendTransaction, connected } = w;
   const init = async () => {
@@ -93,25 +100,43 @@ function ownedNft() {
       combine = combine.concat(borrowed);
 
       var otherList = [];
+      for (let j = 0; j < listings.length; j++) {
+        console.log("id : ", listings[j]);
+        if (listings[j].data.symbol === "EBook") {
+          const dataSolana = await getMetaData(listings[j].data.uri);
+          let newdataSolana = {
+            ...dataSolana,
+            value: listings[j].value,
+            buttonValue: listings[j].buttonValue,
+            id: listings[j].mint
+          };
+          otherList.push(newdataSolana);
+        }
+      }
+      //console.log("list : ", otherList)
+      setListObject(otherList);
 
-      for (let j = 0; j < combine.length; j++) {
-        const dataSolana = await getData(
+      //var otherList = [];
+      /*const dataSolana = await getData(
           connection,
           combine[j].state.tokenPubkey
         );
-        const tempdataSolana = {
-          ...dataSolana,
+        
+        console.log("yaha aaya", otherList);*/
+
+      /* const tempdataSolana = {
           value: combine[j].value,
           buttonValue: combine[j].buttonValue,
         };
         otherList.push(tempdataSolana);
       }
-      const allListings = listings.concat(otherList);
 
+      const allListings = listings.concat(otherList);*/
+
+      /*let arr = {};
       try {
         let nftData = allListings;
         var data = Object.keys(nftData).map((key) => nftData[key]);
-        let arr = {};
         let n = data.length;
         for (let i = 0; i < n; i++) {
           let val = await axios.get(data[i].data.uri);
@@ -126,12 +151,13 @@ function ownedNft() {
             ? [...arr[val.data.collection.name], val]
             : [val];
         }
+
         // contains final list with collection name detail
-        console.log(arr);
-        setListObject(arr);
+       // console.log("check list : ", arr);
+        //setListObject(arr);
       } catch (error) {
         console.log(error);
-      }
+      }*/
     } else {
       setNftList(false);
     }
@@ -170,20 +196,22 @@ function ownedNft() {
           ""
         )}
 
-        {nftList ? (
-          Object.keys(listObject).map((k) => {
-            return (
-              <div key={k}>
-                {/* <center><h1>{k}</h1></center> */}
-                <CardList list={listObject[k]} />
-              </div>
-            );
-          })
-        ) : (
-          <center>
-            <div className="msg"> Connect your wallet to see your NFTs</div>
-          </center>
-        )}
+        <div id="card-list" style={{ flexDirection: "row" }}>
+          {nftList ? (
+            Object.keys(listObject).map((k) => {
+              return (
+                <div key={k}>
+                  {/* <center><h1>{k}</h1></center> */}
+                  <CardList list={listObject[k]} />
+                </div>
+              );
+            })
+          ) : (
+            <center>
+              <div className="msg"> Connect your wallet to see your NFTs</div>
+            </center>
+          )}
+        </div>
         {/* 
             <button className="btn" onClick={init}>
               refresh

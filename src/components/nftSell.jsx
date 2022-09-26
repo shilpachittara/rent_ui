@@ -110,7 +110,7 @@ const Card = ({ id, type, img }) => {
   const [revenueShare, setRevenueShare] = useState(0);
   const [sellPrice, setSellPrice] = useState(0);
 
-
+  console.log(type);
   const fetchMetadata = async () => {
     setErr(null);
     setLog(null);
@@ -156,15 +156,6 @@ const Card = ({ id, type, img }) => {
     if (!token) setErr("no token found");
     console.log(publicKey.toBase58());
     try {
-      console.log("request object : ", 
-      getRate(timeScale, rate),
-        connection,
-        new PublicKey(token).toBase58(),
-        w,
-        getSeconds(timeScaleMinBorrow, minDuration),
-        getSeconds(timeScaleMaxBorrow, maxDuration),
-        revenueShare,
-        sellPrice)
       const resp = await initalizeEscrowHandler(
         getRate(timeScale, rate),
         connection,
@@ -223,11 +214,7 @@ const Card = ({ id, type, img }) => {
       <div className="flex w-70 m-auto">
         <div className="flex-auto card z-70 w-32 max-w-32 bg-primary text-primary-content shadow-2xl new-card">
           <div className="card-body d-block">
-            {type === "sell" ? (
-              <h1 className="card-title"> Selling Details </h1>
-            ) : (
-              <h1 className="card-title"> Renting Details </h1>
-            )}
+            <h1 className="card-title"> Selling Details </h1>
             <div>
               <img src={img} alt="" className="token-img" onClick={""}></img>
             </div>
@@ -236,155 +223,17 @@ const Card = ({ id, type, img }) => {
               <div> {id}</div>
             </div>
             <div></div>
-
             <div className="form-control flex gap-4 w-full">
-            {type === "sell" ? (
               <>
-               <div className="d-flex" FixedPrice>
-                          <h3 className="head w-30">Rent Price</h3>
-                          <input
-                            type="number"
-                            placeholder="Rate Price"
-                            className="input input-bordered input-accent "
-                            onChange={(e) =>
-                              setSellPrice(parseFloat(e.target.value))
-                            }
-                          />
-                          </div>
-                          </>
-            ) : (
-              <>
-                
-                  {/* Minimum Rent Duration */}
-                  <div className="d-flex">
-                    <h3 className="head w-30 ">Minimum Rent Duration</h3>
-                    <input
-                      type="number"
-                      placeholder="Minimum Rent Duration"
-                      className="input input-bordered input-accent"
-                      onChange={(e) => setMinDuration(parseInt(e.target.value))}
-                    />
-                    <select
-                      name="Unit"
-                      className="select select-info  "
-                      onChange={(e) => {
-                        setTimeScaleMinBorrow(parseInt(e.target.value));
-                      }}
-                    >
-                      <option value="" disabled selected hidden>
-                        Unit
-                      </option>
-                      <option value={0}>Seconds</option>
-                      <option value={1}>Minutes</option>
-                      <option value={2}>Hours</option>
-                      <option value={3}>Days</option>
-                      <option value={4}>Weeks</option>
-                      <option value={5}>Months</option>
-                    </select>
-                  </div>
-
-                  {/* Maximum Rent Duration */}
-
-                  <div className="d-flex">
-                    <h3 className="head w-30 ">Maximum Rent Duration</h3>
-                    <input
-                      type="number"
-                      placeholder="Maximum Rent Duration"
-                      className=" input input-bordered input-accent"
-                      onChange={(e) => setMaxDuration(parseInt(e.target.value))}
-                    />
-                    <select
-                      name="Unit"
-                      className="select select-info"
-                      onChange={(e) => {
-                        setTimeScaleMaxBorrow(parseInt(e.target.value));
-                      }}
-                    >
-                      <option value="" disabled selected hidden>
-                        Unit
-                      </option>
-                      <option value={0}>Seconds</option>
-                      <option value={1}>Minutes</option>
-                      <option value={2}>Hours</option>
-                      <option value={3}>Days</option>
-                      <option value={4}>Weeks</option>
-                      <option value={5}>Months</option>
-                    </select>
-                  </div>
-
-                 
-                  {/* Rent Contract Type */}
-
-                  <div className="d-flex">
-                    <h3 className="head w-30">Rent Contract Type</h3>
-                    <div onChange={onChangeValue}>
-                      <input
-                        type="radio"
-                        className="input-mar"
-                        name="rentType"
-                        value="FixedPrice"
-                        checked={rentType === "FixedPrice"}
-                        onChange={(e) => {
-                          setChecked(e.target.value);
-                          console.log("show task details");
-                        }}
-                      />{" "}
-                      Fixed Price
-                      <input
-                        type="radio"
-                        className="input-mar"
-                        name="rentType"
-                        value="RevenueSharing"
-                        checked={rentType === "RevenueSharing"}
-                        onChange={(e) => {
-                          setChecked(e.target.value);
-                          console.log("show this task details");
-                        }}
-                      />{" "}
-                      Revenue Sharing
-                      <input
-                        type="radio"
-                        className="input-mar"
-                        name="rentType"
-                        value="Hybrid"
-                        checked={rentType === "Hybrid"}
-                      />{" "}
-                      Hybrid
-                    </div>
-                  </div>
-
-                  {/* Rent Price */}
-                  {(function () {
-                    if (rentType === "FixedPrice" || rentType === "Hybrid") {
-                      return (
-                        <div className="d-flex" FixedPrice>
-                          <h3 className="head w-30">Rent Price</h3>
-                          <input
-                            type="number"
-                            placeholder="Rate Price"
-                            className="input input-bordered input-accent "
-                            onChange={(e) =>
-                              setRate(parseFloat(e.target.value))
-                            }
-                          />
-                          <select
-                            name="Unit"
-                            className="select select-info  "
-                            onChange={(e) => {
-                              setTimeScaleMaxBorrow(parseInt(e.target.value));
-                            }}
-                          >
-                            <option value="" disabled selected hidden>
-                              Unit
-                            </option>
-                            <option value={0}>Seconds</option>
-                            <option value={1}>Minutes</option>
-                            <option value={2}>Hours</option>
-                            <option value={3}>Days</option>
-                            <option value={4}>Weeks</option>
-                            <option value={5}>Months</option>
-                          </select>
-                          <select
+                <div className="d-flex" FixedPrice>
+                  <h3 className="head w-30">Sell Price</h3>
+                  <input
+                    type="number"
+                    placeholder="Rate Price"
+                    className="input input-bordered input-accent "
+                    onChange={(e) => setSellPrice(parseFloat(e.target.value))}
+                  />
+                   <select
                             className="select select-info  "
                             onChange={(e) => {
                               "";
@@ -394,81 +243,12 @@ const Card = ({ id, type, img }) => {
                               Curreny
                             </option>
                             <option value={0}>SOL</option>
-                            <option value={1}>USDC</option>
                           </select>
-                        </div>
-                      );
-                    }
-                  })()}
+                </div>
+              </>
+              
 
-                  {/* Revenue Split */}
-
-                  {(function () {
-                    if (
-                      rentType === "RevenueSharing" ||
-                      rentType === "Hybrid"
-                    ) {
-                      return (
-                        <div className="d-flex">
-                          <h3 className="head w-30">Revenue Split</h3>
-                          <input
-                            type="number"
-                            placeholder="Owner share %"
-                            className="input input-bordered input-accent w-full "
-                            onChange={(e) =>
-                              setRevenueShare(parseInt(e.target.value))
-                            }
-                          />
-                          <input
-                            type="number"
-                            placeholder="Borrower Share % "
-                            className="input input-bordered input-accent w-full "
-                            onChange={""}
-                          />
-                        </div>
-                      );
-                    }
-                  })()}
-
-                  {/* Revocation Trigger */}
-
-                  {(function () {
-                    if (rentType === "Hybrid") {
-                      return (
-                        <div className="d-flex">
-                          <h3 className="head w-30">Revocation Trigger</h3>
-                          <input
-                            type="number"
-                            placeholder="Reward"
-                            className="input input-bordered input-accent w-full "
-                            onChange={""}
-                          />
-                          <select
-                            className="select select-info  "
-                            onChange={(e) => {
-                              "";
-                            }}
-                          >
-                            <option value="" disabled selected hidden>
-                              Curreny
-                            </option>
-                            <option value={0}>SOL</option>
-                            <option value={1}>USDC</option>
-                          </select>
-                          <p style={{ margin: "auto 1px auto 6px" }}>in</p>
-                          <input
-                            type="number"
-                            placeholder="Time Period"
-                            className="input input-bordered input-accent w-full "
-                            onChange={""}
-                          />
-                        </div>
-                      );
-                    }
-                  })()}
-                   </>
-            )}
-                  {/* <label className="label">
+              {/* <label className="label">
                 <span className="label-text">Unit</span>
               </label>
               <select
@@ -487,7 +267,7 @@ const Card = ({ id, type, img }) => {
                 <option value={5}>Months</option>
               </select> */}
 
-                  {/* <input
+              {/* <input
                 type="number"
                 placeholder="Minimum Rent Duration"
                 className=" flex-auto input input-bordered input-accent w-full "
@@ -497,7 +277,7 @@ const Card = ({ id, type, img }) => {
                 <span className="label-text">Unit</span>
               </label> */}
 
-                  {/* <select
+              {/* <select
                 className="select select-info  "
                 onChange={(e) => {
                   setTimeScaleMinBorrow(parseInt(e.target.value));
@@ -512,16 +292,16 @@ const Card = ({ id, type, img }) => {
                 <option value={4}>Weeks</option>
                 <option value={5}>Months</option>
               </select> */}
-                  {/* <input
+              {/* <input
                 type="number"
                 placeholder="Maximum Rent Duration"
                 className=" flex-auto input input-bordered input-accent w-full "
                 onChange={(e) => setMaxDuration(parseInt(e.target.value))}
               /> */}
-                  {/* <label className="label">
+              {/* <label className="label">
                 <span className="label-text">Unit</span>
               </label> */}
-                  {/* <select
+              {/* <select
                 className="select select-info  "
                 onChange={(e) => {
                   setTimeScaleMaxBorrow(parseInt(e.target.value));
@@ -536,8 +316,7 @@ const Card = ({ id, type, img }) => {
                 <option value={4}>Weeks</option>
                 <option value={5}>Months</option>
               </select> */}
-                </div>{" "}
-              
+            </div>{" "}
             <div className="justify-end card-actions justify-center">
               <button className="btn" onClick={initalizeEscrow}>
                 Initialize Token Listing

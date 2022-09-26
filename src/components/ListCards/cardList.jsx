@@ -5,50 +5,45 @@ import CardDetail from "./cardDetail";
 import "./styles/CardList.css";
 import CreateListing from "../createListing";
 
-const CardList = ({ list, type = "horizontal"}) => {
-
+const CardList = ({ list, type = "horizontal" }) => {
   const [openList, setOpenList] = useState(true);
   const [listItem, setListItem] = useState({});
-  const [selectionType, setSelectionType] = useState('lend')
+  const [selectionType, setSelectionType] = useState("lend");
   const openlist = (item) => {
-    setOpenList(false)
-    setListItem(item)
+    setOpenList(false);
+    setListItem(item);
     // Write log for nft withdraw here
-    if(buttonValue === "Withdraw"){
-      console.log(item.id)
+    if (buttonValue === "Withdraw") {
+      console.log(item.id);
     }
-  }
+  };
+
   const openSell = (item) => {
-    setOpenList(false)
-    setListItem(item)
-    setSelectionType('sell')
+    setOpenList(false);
+    setListItem(item);
+    setSelectionType("sell");
     // Write log for nft withdraw here
-  }
+  };
   const open = () => {
-    setOpenList(true)
-  }
+    setOpenList(true);
+  };
   return (
-    <> {openList?
-     (<div
-      id="card-list"
-      style={{ flexDirection: type == "horizontal" ? "row" : "column" }}
-    >
-      {list.map((item, index) => (
-        <>
+    <>
+      {" "}
+      {openList ? (
           <CardDetail
-            nftUri={item.data.image}
-            name={item.data.name}
-            status={item.value}
-            buttonValue={item.buttonValue}
-            price={item.data.sellerFeeBasisPoints}
-            onClick={()=>openlist(item)}
-            onClickSell={()=>openSell(item)}
-            key={index}
+            id={list.id}
+            nftUri={list.image}
+            name={list.name}
+            status={list.value}
+            buttonValue={list.buttonValue}
+            price={list.sellerFeeBasisPoints}
+            onClick={() => openlist(list)}
+            onClickSell={() => openSell(list)}
           />
-        </>
-      ))}
-    </div> ) :(<CreateListing id={listItem.id} onClick={open} type={selectionType}/> )
-}
+      ) : (
+        <CreateListing id={listItem.id} onClick={open} type={selectionType} />
+      )}
     </>
   );
 };
