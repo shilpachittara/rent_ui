@@ -48,26 +48,24 @@ function Marketplace() {
     //onsole.log(listings[0].state.tokenPubkey)
     let listArr = [];
     for (let i in listings) {
-      if (listings[i].data && listings[i] && listings[i].data.symbol === "Ebook") {
-        try {
-          const state = await getMetadata(
+      try {
+        const state = await getMetadata(
+          connection,
+          listings[i].state.tokenPubkey
+        );
+        //console.log(state.getState().state.toNumber());
+        if (state.getState().state.toNumber() === 0) {
+          const dataSolana = await getData(
             connection,
             listings[i].state.tokenPubkey
           );
-          //console.log(state.getState().state.toNumber());
-          if (state.getState().state.toNumber() === 0) {
-            const dataSolana = await getData(
-              connection,
-              listings[i].state.tokenPubkey
-            );
-            listArr.push(dataSolana);
-            setids((ids) => [
-              ...new Set([...ids, listings[i].state.tokenPubkey]),
-            ]);
-          }
-        } catch (e) {
-          await deleteListing(listings[i].state.tokenPubkey);
+          listArr.push(dataSolana);
+          setids((ids) => [
+            ...new Set([...ids, listings[i].state.tokenPubkey]),
+          ]);
         }
+      } catch (e) {
+        await deleteListing(listings[i].state.tokenPubkey);
       }
     }
 
@@ -81,16 +79,22 @@ function Marketplace() {
       for (let i = 0; i < n; i++) {
         let val = await axios.get(data[i].data.uri);
         //console.log(val);
+        if (
+          val.data &&
+          val.data.symbol &&
+          val.data.symbol === "EBook"
+        ) {
         val = {
           ...val,
           id: listArr[i].mint,
         };
-        arr[val.data.collection.name] = arr[val.data.collection.name]
-          ? [...arr[val.data.collection.name], val]
+        arr[val.data.symbol] = arr[val.data.symbol]
+          ? [...arr[val.data.symbol], val]
           : [val];
       }
+      }
       // contains final list with collection name detail
-      //console.log(arr);
+      
       setListObject(arr);
     } catch (error) {
       console.log(error);
