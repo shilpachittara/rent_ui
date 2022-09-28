@@ -4,9 +4,6 @@
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.12.4",
-    "@metaplex-foundation/js-next": "^0.11.1",
-    "@metaplex-foundation/mpl-token-metadata": "^2.3.0",
-    "@metaplex/js": "^4.12.0",
     "@nfteyez/sol-rayz": "^0.10.2",
     "@solana/spl-token": "0.1.8",
     "@solana/wallet-adapter-base": "^0.9.5",
