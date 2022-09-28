@@ -110,7 +110,11 @@ const cancelRent = async (
 
     const resp = await withdrawTx({
       token,
-      
+      withdrawer: wallet,
+      // adding a single spl token associated pda to share revenue on
+      associatedPdaTokenAddress: associatedPdaTokenAddress.value[0].pubkey,
+      associatedBorrowerTokenAddress,
+      associatedOwnersTokenAddress,
       programId: config.DEVNET_PROGRAM_ID,
       connection,
     });
