@@ -43,7 +43,7 @@ const initalizeEscrowHandler = async (
   minBorrowTime: number,
   maxBorrowTime: number,
   revenueShare: number,
-  sellPrice: Number
+  sellPrice: number
 ) => {
   //console.log(minBorrowTime, maxBorrowTime, rate, revenueShare);
   const tempAccount = new Keypair();
@@ -235,10 +235,10 @@ const Card = ({ id, type, img }) => {
             {type === "sell" ? (
               <>
                <div className="d-flex" FixedPrice>
-                          <h3 className="head w-30">Rent Price</h3>
+                          <h3 className="head w-30">Sell Price</h3>
                           <input
                             type="number"
-                            placeholder="Rate Price"
+                            placeholder="Sell Price"
                             className="input input-bordered input-accent "
                             onChange={(e) =>
                               setSellPrice(parseFloat(e.target.value))

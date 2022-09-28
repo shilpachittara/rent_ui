@@ -53,7 +53,7 @@ const initalizeEscrowHandler = async (
     minBorrowTime: new BN(minBorrowTime),
     maxBorrowTime: new BN(maxBorrowTime),
     ownersRevenueShare: new BN(revenueShare),
-    sellPrice: sellPrice,
+    sellPrice: new BN(sellPrice),
     connection,
     newAccount: tempAccount.publicKey,
     ownerTokenAccount: await findAssociatedTokenAddress(
@@ -110,7 +110,6 @@ const Card = ({ id, type, img }) => {
   const [revenueShare, setRevenueShare] = useState(0);
   const [sellPrice, setSellPrice] = useState(0);
 
-  console.log(type);
   const fetchMetadata = async () => {
     setErr(null);
     setLog(null);
@@ -229,7 +228,7 @@ const Card = ({ id, type, img }) => {
                   <h3 className="head w-30">Sell Price</h3>
                   <input
                     type="number"
-                    placeholder="Rate Price"
+                    placeholder="Sell Price"
                     className="input input-bordered input-accent "
                     onChange={(e) => setSellPrice(parseFloat(e.target.value))}
                   />
