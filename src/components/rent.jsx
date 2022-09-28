@@ -241,7 +241,7 @@ const Rent = ({ id, selection, type }) => {
   return (
     <div className="container mx-auto center">
       <div className="flex">
-        <div className="flex-auto card w-96 max-w-1/2 bg-base-100 text-primary-content shadow-2xl">
+        <div className="flex-auto card-rent w-96 max-w-1/2 bg-base-100 text-primary-content shadow-2xl">
           <div className="card-body">
             {withdrawButton ? (
               <>

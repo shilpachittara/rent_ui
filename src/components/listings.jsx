@@ -6,7 +6,7 @@ import {
 } from "@solana/wallet-adapter-react";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import React, { useEffect, useState } from "react";
-import { queryTokenState, config } from "stream-nft-sdk";
+import { queryTokenState, config } from "stream-nft";
 import { deleteListing, fetchListings } from "../services/firebase";
 const getMetadata = async (connection: Connection, token: string) => {
   return await queryTokenState({
