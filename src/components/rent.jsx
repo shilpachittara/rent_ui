@@ -20,6 +20,7 @@ import {
   sendTransaction,
   withdrawTx,
   rentTx,
+  findAssociatedTokenAddress,
   KeyPairWallet,
 } from "stream-nft";
 import { getSeconds } from "../services/common";
@@ -122,6 +123,26 @@ const cancelRent = async (
   
 };
 
+const withdrawHandler = async (
+  connection: Connection,
+  token: PublicKey,
+  wallet: WalletContextState
+) => {
+  const resp = await withdrawTx({
+    token,
+    programId: config.DEVNET_PROGRAM_ID,
+    connection,
+  });
+  const txId = await sendTransaction({
+    connection,
+    wallet,
+    txs: resp.tx,
+    signers: [],
+    options: { skipPreflight: false, preflightCommitment: "confirmed" },
+  });
+  return `withdrawEscrowTx Completed: ${txId}`;
+};
+
 // TO DO add logic for buy
 const Rent = ({ id, selection, type }) => {
   const { connection } = useConnection();
@@ -138,6 +159,7 @@ const Rent = ({ id, selection, type }) => {
   const [rate, setRate] = useState(0);
   const [buy, setBuy] = useState(0);
   const [withdrawButton, setWithdrawButton] = useState(false);
+  const [escrowState, setEscrowState] = useState(null);
 
   const initRent = async () => {
     setToken(id);
@@ -185,6 +207,31 @@ const Rent = ({ id, selection, type }) => {
       console.log(error);
     }
   };
+
+  const withdraw = async () => {
+    setToken(id);
+    setErr(null);
+    setLog(null);
+    setEscrowState(null);
+    if (!publicKey) {
+      setErr("Wallet not connected");
+      return;
+    }
+    if (!token) setErr("no token found");
+    console.log(publicKey.toBase58());
+    try {
+      const resp = await withdrawHandler(
+        connection,
+        new PublicKey(token),
+        w
+      );
+      setLog(resp);
+    } catch (error) {
+      console.log(error);
+      setErr(error.message);
+    }
+  };
+
   const cancel = async () => {
     setErr(null);
     setLog(null);
@@ -236,7 +283,7 @@ const Rent = ({ id, selection, type }) => {
             <div className="flex-auto card w-96 max-w-1/2 bg-base-100 text-primary-content shadow-2xl">
               <div className="card-body">
                 <div className="card-actions">
-                  <button className="btn" onClick={cancel}>
+                  <button className="btn" onClick={withdraw}>
                     Withdraw NFT
                   </button>
                 </div>
