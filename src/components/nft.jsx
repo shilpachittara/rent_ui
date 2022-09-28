@@ -23,9 +23,10 @@ import {
   findAssociatedTokenAddress,
   sendTransaction,
   cancelEscrowTx,
-} from "stream-nft-sdk";
+} from "stream-nft";
 import { addDocument } from "../services/firebase";
 import { getRate, getSeconds } from "../services/common";
+
 const getMetadata = async (connection: Connection, token: string) => {
   return await queryTokenState({
     programId: config.DEVNET_PROGRAM_ID,
@@ -53,7 +54,7 @@ const initalizeEscrowHandler = async (
     minBorrowTime: new BN(minBorrowTime),
     maxBorrowTime: new BN(maxBorrowTime),
     ownersRevenueShare: new BN(revenueShare),
-    sellPrice: sellPrice,
+    sellPrice: new BN(sellPrice),
     connection,
     newAccount: tempAccount.publicKey,
     ownerTokenAccount: await findAssociatedTokenAddress(
@@ -157,13 +158,6 @@ const Card = ({ id, type, img }) => {
     console.log(publicKey.toBase58());
     try {
       console.log("request object : ", 
-      getRate(timeScale, rate),
-        connection,
-        new PublicKey(token).toBase58(),
-        w,
-        getSeconds(timeScaleMinBorrow, minDuration),
-        getSeconds(timeScaleMaxBorrow, maxDuration),
-        revenueShare,
         sellPrice)
       const resp = await initalizeEscrowHandler(
         getRate(timeScale, rate),
