@@ -85,7 +85,7 @@ function ownedNft() {
       });
 
       for (let i in listed) {
-        listed[i] = { ...listed[i], value: "Listed", buttonValue: "Options" };
+        listed[i] = { ...listed[i], value: "Listed", buttonValue: "Cancel" };
       }
 
       const borrowed = await getWalletTokens({
@@ -96,7 +96,7 @@ function ownedNft() {
       });
 
       for (let i in borrowed) {
-        borrowed[i] = { ...borrowed[i], value: "Borrowed", buttonValue: "" };
+        borrowed[i] = { ...borrowed[i], value: "Rented", buttonValue: "Withdraw" };
       }
 
       var combine = [];
@@ -138,6 +138,7 @@ function ownedNft() {
         }
       }
       setListObject(otherList);
+      console.log(otherList)
       //var otherList = [];
       /*const dataSolana = await getData(
           connection,

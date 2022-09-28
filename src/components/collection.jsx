@@ -9,16 +9,19 @@ import BorrowedNft from "./borrowedNft";
 import Marketplace from "./market";
 
 const collection = ({ onClick }) => {
-  const [sellActive, setSellActive] = React.useState(true);
+  const [sellActive, setSellActive] = React.useState(0);
 
-  const handleBorrow = () => {
-    setSellActive(false);
+  const handleRent = () => {
+    setSellActive(1);
   };
 
   const handleOwner = () => {
-    setSellActive(true);
+    setSellActive(0);
   };
 
+  const handleBorrow = () => {
+    setSellActive(2);
+  };
   return (
     <>
       <div className="flex flex-col items-center">
@@ -26,7 +29,7 @@ const collection = ({ onClick }) => {
           <div className="tabs tabs-boxed col-80">
             <a
               className={`tab tab-lg box outset ${
-                sellActive === true ? "tab-active" : ""
+                sellActive === 0 ? "tab-active" : ""
               }`}
               onClick={() => handleOwner()}
             >
@@ -35,31 +38,30 @@ const collection = ({ onClick }) => {
 
             <a
               className={`tab tab-lg box outset ${
-                sellActive === false ? "tab-active" : ""
+                sellActive === 1 ? "tab-active" : ""
               }`}
-              onClick={() => handleBorrow()}
+              onClick={() => handleRent()}
             >
               Buy/Rent
             </a>
             <a
-              className={"tab tab-lg"}
+              className={`tab tab-lg box outset ${
+                sellActive === 2 ? "tab-active" : ""
+              }`}
               style={{ width: "s200px" }}
-              onClick={onClick}
+              onClick={() => handleBorrow()}
             >
-              Collections
+              Borrow
             </a>
           </div>
         </div>
 
-        {sellActive ? (
-          <>
-            <OwnedNft />
-            <BorrowedNft />
-          </>
+        {sellActive === 0 ? (
+          <OwnedNft />
+        ) : sellActive === 1 ? (
+          <Marketplace />
         ) : (
-          <>
-            <Marketplace />
-          </>
+          <BorrowedNft />
         )}
       </div>
     </>

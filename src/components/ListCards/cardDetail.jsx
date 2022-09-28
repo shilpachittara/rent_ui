@@ -60,7 +60,11 @@ const cardDetail = ({
     setOpenSell(false);
   };
 
-
+  useEffect(() => {
+    if (status === "Owned") {
+      setSell(true);
+    }
+  }, []);
   return (
     <Card
       blurColor={colors[0]}
@@ -95,11 +99,16 @@ const cardDetail = ({
             </div>
 
             <>
-              <div className="buttons">
-                <button className="buy-now" type="button" onClick={handleOpenSell}>
-                  Sell
-                </button>
-                <Modal
+              {sell ? (
+                <div className="buttons">
+                  <button
+                    className="buy-now"
+                    type="button"
+                    onClick={handleOpenSell}
+                  >
+                    Sell
+                  </button>
+                  <Modal
                     onClose={handleCloseSell}
                     open={openSell}
                     style={{
@@ -114,7 +123,10 @@ const cardDetail = ({
                     <NftSell id={id} img={nftUri} type={"sell"} />
                     {/* <WithdrawNft></WithdrawNft> */}
                   </Modal>
-              </div>
+                </div>
+              ) : (
+                ""
+              )}
             </>
             <>
               {buttonValue ? (
