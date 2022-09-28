@@ -22,6 +22,13 @@ const getMetadata = async (connection: Connection, token: string) => {
   });
 };
 
+const getMetaDataFromURI = async (uri) => {
+  // console.log("uri : ", uri);
+  const response = await fetch(uri);
+  const jsonData = await response.json();
+  return jsonData;
+};
+
 const getData = async (connection, token) => {
   let mintPubkey = new PublicKey(token);
   const tokenmeta = await programs.metadata.Metadata.findByMint(
@@ -53,16 +60,22 @@ function BorrowedNft() {
           connection,
           listings[i].state.tokenPubkey
         );
-        //console.log(state.getState().state.toNumber());
         if (state.getState().state.toNumber() === 1) {
           const dataSolana = await getData(
             connection,
             listings[i].state.tokenPubkey
           );
-          listArr.push({ listed: true, ...dataSolana });
-          setids((ids) => [
-            ...new Set([...ids, listings[i].state.tokenPubkey]),
-          ]);
+
+          if (
+            dataSolana.data &&
+            dataSolana.data.symbol &&
+            dataSolana.data.symbol === "EBook"
+          ) {
+            listArr.push({ listed: true, ...dataSolana });
+            setids((ids) => [
+              ...new Set([...ids, listings[i].state.tokenPubkey]),
+            ]);
+          }
         }
       } catch (e) {
         await deleteListing(listings[i].state.tokenPubkey);

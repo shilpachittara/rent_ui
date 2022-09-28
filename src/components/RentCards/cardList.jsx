@@ -13,9 +13,15 @@ const CardList = ({ list, type = "horizontal"}) => {
   const openlist = (item) => {
     setOpenList(false)
     setListItem(item)
+    if(item.listed){
+      setOpenSelected('withdraw');
+    }
+    else {
     setOpenSelected('rent')
+    }
   }
   const openbuy = (item) => {
+    console.log("item : ", item)
     setOpenList(false)
     setListItem(item)
     setOpenSelected('buy')
@@ -24,9 +30,11 @@ const CardList = ({ list, type = "horizontal"}) => {
     setOpenList(true)
   }
   const readbook =(item) => {
-    if(item.data.name === "Murakumogiri"){
-      window.open("https://www.google.com", '_blank', 'noopener,noreferrer');
-    }
+    const found = item.data.attributes.find(obj => {
+      return obj.trait_type === "url";
+    });
+    const url = found.value;
+      window.open(url, '_blank', 'noopener,noreferrer');
   }
   return (
     <> {openList?

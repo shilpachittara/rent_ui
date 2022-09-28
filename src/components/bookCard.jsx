@@ -59,7 +59,7 @@ const bookCard = ({
           <div className="wrapper">
             <div className="info-container">
               <p className="owner"> { }</p>
-              <p className="name">E-book collection</p>
+              <p className="name">Publications</p>
             </div>
 
 

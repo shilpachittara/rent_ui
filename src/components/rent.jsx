@@ -38,7 +38,6 @@ const rentInit = async (
   time: number,
   buy: Number
 ) => {
-
   const resp = await rentTx({
     borrower: wallet,
     token,
@@ -102,12 +101,12 @@ const cancelRent = async (
         mint: new PublicKey("8dv9xBuvv7czsX32tnkafSfi9d7Bh5y4Ly5stdGjEg5Z"),
       }
     );
-    /*console.log("here");
+    console.log("here");
     console.log(
       associatedOwnersTokenAddress,
       associatedBorrowerTokenAddress,
       associatedPdaTokenAddress
-    );*/
+    );
 
     const resp = await withdrawTx({
       token,
@@ -148,7 +147,8 @@ const Rent = ({ id, selection, type }) => {
   const [maxMinConstraint, setMaxMinConstraint] = useState("");
   const [rate, setRate] = useState(0);
   const [buy, setBuy] = useState(0);
-
+  const [withdrawButton, setWithdrawButton] = useState(false);
+  
   const initRent = async () => {
     setToken(id);
     setErr(null);
@@ -228,6 +228,9 @@ const Rent = ({ id, selection, type }) => {
     if ("rent" === selection) {
       setRentFlow(true);
     }
+    if ("withdraw" === selection) {
+      setWithdrawButton(true);
+    }
     if ("buy" === type) {
       setBuy(1);
     }
@@ -240,99 +243,133 @@ const Rent = ({ id, selection, type }) => {
       <div className="flex">
         <div className="flex-auto card w-96 max-w-1/2 bg-base-100 text-primary-content shadow-2xl">
           <div className="card-body">
-            {type === "rent" ? (
-              <h2 className="card-title"> RENT </h2>
-            ) : (
-              <h2 className="card-title"> BUY </h2>
-            )}
-            <div className="flex gap-4">
-              <div> Token Id</div>
-              <div> {id}</div>
-
-              {type === "rent" ? (
-                <>
-                  <div>Duration</div>
-                  <div> {maxMinConstraint}</div>
-                </>
-              ) : (
-                ""
-              )}
-
-              <div>Rate</div>
-              <div> {rate} SOL/s</div>
-
-              {type === "rent" ? (
-                <>
-                  <input
-                    type="number"
-                    onChange={(e) => {
-                      //setTime(parseInt(e.target.value));
-                      calculateRent(e);
-                    }}
-                    placeholder="Duration"
-                    className=" flex-auto input input-bordered input-accent  max-w-xs s"
-                  />
-                  <label className="label">
-                    <span className="label-text">Unit</span>
-                  </label>
-                  <select
-                    className="select select-info  "
-                    onChange={(e) => {
-                      setScale(parseInt(e.target.value));
-                    }}
-                  >
-                    <option value={0}>Seconds</option>
-                    <option value={1} defaultValue={true}>
-                      Minutes
-                    </option>
-                    <option value={2}>Hours</option>
-                    <option value={3}>Days</option>
-                    <option value={4}>Weeks</option>
-                    <option value={5}>Months</option>
-                  </select>
-                </>
-              ) : (
-                ""
-              )}
-            </div>
-
-            {rentFlow ? (
-              <div className="justify-end card-actions">
-                <button className="btn" onClick={initRent}>
-                  borrow It for {bill} SOL!!!
-                </button>
-                <button className="btn" onClick={cancel}>
-                  return borrowed nft
-                </button>
-              </div>
-            ) : (
-              <div className="justify-end card-actions">
-                <button className="btn" onClick={initRent}>
-                  Buy It for {rate} SOL!!!
-                </button>
-              </div>
-            )}
-            {err ? (
-              <div className="alert alert-error shadow-lg">
-                <div>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="stroke-current flex-shrink-0 h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span>{err}</span>
+            {withdrawButton ? (
+              <>
+                <div className="card-actions">
+                  <button className="btn" onClick={cancel}>
+                    Withdraw NFT
+                  </button>
                 </div>
-              </div>
+                {err ? (
+                  <div className="alert alert-error shadow-lg">
+                    <div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="stroke-current flex-shrink-0 h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <span>{err}</span>
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </>
             ) : (
-              ""
+              <>
+                {type === "rent" ? (
+                  <h2 className="card-title"> RENT </h2>
+                ) : (
+                  <h2 className="card-title"> BUY </h2>
+                )}
+                <div className="flex gap-4">
+                  <div> Token Id</div>
+                  <div> {id}</div>
+
+                  {type === "rent" ? (
+                    <>
+                      <div>Duration</div>
+                      <div> {maxMinConstraint}</div>
+                    </>
+                  ) : (
+                    ""
+                  )}
+
+                  <div>Rate</div>
+                  <div> {rate} SOL/s</div>
+
+                  {type === "rent" ? (
+                    <>
+                      <input
+                        type="number"
+                        onChange={(e) => {
+                          //setTime(parseInt(e.target.value));
+                          calculateRent(e);
+                        }}
+                        placeholder="Duration"
+                        className=" flex-auto input input-bordered input-accent  max-w-xs s"
+                      />
+                      <label className="label">
+                        <span className="label-text">Unit</span>
+                      </label>
+                      <select
+                        className="select select-info  "
+                        onChange={(e) => {
+                          setScale(parseInt(e.target.value));
+                        }}
+                      >
+                        <option value={0}>Seconds</option>
+                        <option value={1} defaultValue={true}>
+                          Minutes
+                        </option>
+                        <option value={2}>Hours</option>
+                        <option value={3}>Days</option>
+                        <option value={4}>Weeks</option>
+                        <option value={5}>Months</option>
+                      </select>
+                    </>
+                  ) : (
+                    ""
+                  )}
+                </div>
+
+                {rentFlow ? (
+                  <div className="justify-end card-actions">
+                    <button className="btn" onClick={initRent}>
+                      borrow It for {bill} SOL!!!
+                    </button>
+                    <button className="btn" onClick={cancel}>
+                      return borrowed nft
+                    </button>
+                  </div>
+                ) : (
+                  <div className="justify-end card-actions">
+                    <button className="btn" onClick={initRent}>
+                      Buy It for {rate} SOL!!!
+                    </button>
+                  </div>
+                )}
+                {err ? (
+                  <div className="alert alert-error shadow-lg">
+                    <div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="stroke-current flex-shrink-0 h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                      <span>{err}</span>
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </>
             )}
           </div>
         </div>

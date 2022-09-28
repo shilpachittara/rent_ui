@@ -32,12 +32,16 @@ function ownedNft() {
   const { connection } = useConnection();
 
   const getData = async (connection, token) => {
-    let mintPubkey = new PublicKey(token);
-    const tokenmeta = await programs.metadata.Metadata.findByMint(
-      connection,
-      mintPubkey
-    );
-    return tokenmeta.data;
+    try {
+      let mintPubkey = new PublicKey(token);
+      const tokenmeta = await programs.metadata.Metadata.findByMint(
+        connection,
+        mintPubkey
+      );
+      return tokenmeta.data;
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const getMetaData = async (uri) => {
@@ -99,23 +103,41 @@ function ownedNft() {
       combine = combine.concat(listed);
       combine = combine.concat(borrowed);
 
+      let combineOther = [];
+
+      for (let k = 0; k < combine.length; k++) {
+        const dataSolana = await getData(
+          connection,
+          combine[k].state.tokenPubkey
+        );
+        if (dataSolana) {
+          const tempdataSolana = {
+            ...dataSolana,
+            value: combine[k].value,
+            buttonValue: combine[k].buttonValue,
+          };
+          combineOther.push(tempdataSolana);
+        }
+      }
+      const allListings = listings.concat(combineOther);
+
       var otherList = [];
-      for (let j = 0; j < listings.length; j++) {
-        console.log("id : ", listings[j]);
-        if (listings[j].data.symbol === "EBook") {
-          const dataSolana = await getMetaData(listings[j].data.uri);
+      for (let j = 0; j < allListings.length; j++) {
+        if (
+          allListings[j].data.symbol === "EBook" &&
+          allListings[j].data.name !== "Publications"
+        ) {
+          const dataSolana = await getMetaData(allListings[j].data.uri);
           let newdataSolana = {
             ...dataSolana,
-            value: listings[j].value,
-            buttonValue: listings[j].buttonValue,
-            id: listings[j].mint
+            value: allListings[j].value,
+            buttonValue: allListings[j].buttonValue,
+            id: allListings[j].mint,
           };
           otherList.push(newdataSolana);
         }
       }
-      //console.log("list : ", otherList)
       setListObject(otherList);
-
       //var otherList = [];
       /*const dataSolana = await getData(
           connection,
