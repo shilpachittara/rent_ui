@@ -148,7 +148,7 @@ const Rent = ({ id, selection, type }) => {
   const [rate, setRate] = useState(0);
   const [buy, setBuy] = useState(0);
   const [withdrawButton, setWithdrawButton] = useState(false);
-  
+
   const initRent = async () => {
     setToken(id);
     setErr(null);
@@ -241,10 +241,10 @@ const Rent = ({ id, selection, type }) => {
   return (
     <div className="container mx-auto center">
       <div className="flex">
-        <div className="flex-auto card-rent w-96 max-w-1/2 bg-base-100 text-primary-content shadow-2xl">
-          <div className="card-body">
-            {withdrawButton ? (
-              <>
+        {withdrawButton ? (
+          <>
+            <div className="flex-auto card w-96 max-w-1/2 bg-base-100 text-primary-content shadow-2xl">
+              <div className="card-body">
                 <div className="card-actions">
                   <button className="btn" onClick={cancel}>
                     Withdraw NFT
@@ -272,9 +272,13 @@ const Rent = ({ id, selection, type }) => {
                 ) : (
                   ""
                 )}
-              </>
-            ) : (
-              <>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex-auto card-rent w-96 max-w-1/2 bg-base-100 text-primary-content shadow-2xl">
+              <div className="card-body">
                 {type === "rent" ? (
                   <h2 className="card-title"> RENT </h2>
                 ) : (
@@ -369,10 +373,10 @@ const Rent = ({ id, selection, type }) => {
                 ) : (
                   ""
                 )}
-              </>
-            )}
-          </div>
-        </div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
       {log ? (
         <div className="alert alert-info shadow-lg">
