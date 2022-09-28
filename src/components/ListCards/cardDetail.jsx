@@ -150,7 +150,7 @@ const cardDetail = ({
                       margin: "auto",
                     }}
                   >
-                    <Nft id={id} img={nftUri} type={"lend"}></Nft>
+                    <Nft id={id} img={nftUri} type={"lend"} buttonValue={buttonValue}></Nft>
                     {/* <WithdrawNft></WithdrawNft> */}
                   </Modal>
                 </div>

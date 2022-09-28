@@ -138,7 +138,6 @@ function ownedNft() {
         }
       }
       setListObject(otherList);
-      console.log(otherList)
       //var otherList = [];
       /*const dataSolana = await getData(
           connection,

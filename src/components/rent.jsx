@@ -71,7 +71,6 @@ const cancelRent = async (
   );
   //  const
   //const wallet = new KeyPairWallet(aliceKeyPair);
-  try {
     const xToken = new Token(
       connection,
       new PublicKey("8dv9xBuvv7czsX32tnkafSfi9d7Bh5y4Ly5stdGjEg5Z"),
@@ -103,18 +102,11 @@ const cancelRent = async (
     );
     console.log("here");
     console.log(
-      associatedOwnersTokenAddress,
-      associatedBorrowerTokenAddress,
-      associatedPdaTokenAddress
+      token
     );
 
     const resp = await withdrawTx({
       token,
-      withdrawer: wallet,
-      // adding a single spl token associated pda to share revenue on
-      associatedPdaTokenAddress: associatedPdaTokenAddress.value[0].pubkey,
-      associatedBorrowerTokenAddress,
-      associatedOwnersTokenAddress,
       programId: config.DEVNET_PROGRAM_ID,
       connection,
     });
@@ -127,9 +119,7 @@ const cancelRent = async (
     });
 
     return `withdrawEscrowTx Completed: ${txId}`;
-  } catch (err) {
-    console.log("err", err);
-  }
+  
 };
 
 // TO DO add logic for buy
