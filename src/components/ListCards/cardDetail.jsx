@@ -59,7 +59,8 @@ const cardDetail = ({
   const w = useWallet();
   const [maxMinConstraint, setMaxMinConstraint] = useState("0 s");
   const [rate, setRate] = useState(0);
-
+  const [sellPrice, setSellPrice] = useState(0);
+  const [rentFlow, setRentFlow] = useState(true);
 
   const handleClose = () => {
     setOpen(false);
@@ -80,6 +81,8 @@ const cardDetail = ({
   const setConstraints = async (id) => {
     const currentState = await getMetadata(connection, id);
     setRate(currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL);
+    setSellPrice(currentState.getState().sellPrice.toNumber() / LAMPORTS_PER_SOL);
+
     setMaxMinConstraint(
       `${currentState
         .getState()
@@ -90,9 +93,12 @@ const cardDetail = ({
   };
 
   useEffect(() => {
-    setConstraints(id)
     if (status === "Owned") {
       setSell(true);
+
+      setRentFlow(false);
+    } else {
+      setConstraints(id);
     }
   }, []);
   return (
@@ -122,9 +128,19 @@ const cardDetail = ({
             </div>
           </div>
 
-          <div className="wrapper">
-              <p className="name">{rate} SOL,  {maxMinConstraint}</p>
-          </div>
+          {rentFlow ? (
+            <div className="wrapper">
+              <p className="name">
+                {rate} SOL, {maxMinConstraint}
+              </p>
+            </div>
+          ) : (
+            <div className="wrapper">
+              <p className="name">
+                {sellPrice} SOL, {maxMinConstraint}
+              </p>
+            </div>
+          )}
 
           <div className="wrapper">
             <div className="info-container">
@@ -184,7 +200,12 @@ const cardDetail = ({
                       margin: "auto",
                     }}
                   >
-                    <Nft id={id} img={nftUri} type={"lend"} buttonValue={buttonValue}></Nft>
+                    <Nft
+                      id={id}
+                      img={nftUri}
+                      type={"lend"}
+                      buttonValue={buttonValue}
+                    ></Nft>
                     {/* <WithdrawNft></WithdrawNft> */}
                   </Modal>
                 </div>

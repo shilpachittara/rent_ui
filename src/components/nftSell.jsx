@@ -46,6 +46,7 @@ const initalizeEscrowHandler = async (
 ) => {
   //console.log(minBorrowTime, maxBorrowTime, rate, revenueShare);
   const tempAccount = new Keypair();
+  console.log("sellPrice : ", sellPrice)
   const resp = await initNFTEscrowTx({
     owner: wallet,
     token,
@@ -53,7 +54,7 @@ const initalizeEscrowHandler = async (
     minBorrowTime: new BN(minBorrowTime),
     maxBorrowTime: new BN(maxBorrowTime),
     ownersRevenueShare: new BN(revenueShare),
-    sellPrice: new BN(sellPrice),
+    sellPrice: new BN(sellPrice * LAMPORTS_PER_SOL),
     connection,
     newAccount: tempAccount.publicKey,
     ownerTokenAccount: await findAssociatedTokenAddress(
@@ -62,6 +63,7 @@ const initalizeEscrowHandler = async (
     ),
     programId: config.DEVNET_PROGRAM_ID,
   });
+  console.log(resp)
   const txId = await wallet.sendTransaction(resp.tx, connection, {
     signers: [tempAccount],
     options: { skipPreflight: false, preflightCommitment: "confirmed" },
@@ -129,6 +131,7 @@ const Card = ({ id, type, img }) => {
           {
             ...state.getState(),
             rate: `${state.getState().rate.toNumber() / LAMPORTS_PER_SOL} SOL`,
+            sellPrice: `${state.getState().sellPrice.toNumber() / LAMPORTS_PER_SOL} SOL`,
             expiry: state.getState().expiry.toString(),
             state: state.getState().state.toString(),
             minBorrowDuration: state.getState().minBorrowDuration.toString(),

@@ -38,9 +38,11 @@ const cardDetail = ({
 
   const { connection } = useConnection();
   const w = useWallet();
-  const [maxMinConstraint, setMaxMinConstraint] = useState("");
+  const [maxMinConstraint, setMaxMinConstraint] = useState("0 s");
   const [rate, setRate] = useState(0);
 
+  const [sellPrice, setSellPrice] = useState(0);
+  const [rentFlow, setRentFlow] = useState(false);
   const like = () => setIsLike(!isLike);
 
   const getColors = (colors) => {
@@ -51,6 +53,7 @@ const cardDetail = ({
   const setConstraints = async (id) => {
     const currentState = await getMetadata(connection, id);
     setRate(currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL);
+    setSellPrice(currentState.getState().sellPrice.toNumber() / LAMPORTS_PER_SOL);
     setMaxMinConstraint(
       `${currentState
         .getState()
@@ -67,6 +70,7 @@ const cardDetail = ({
     if ("Rented" === status) {
       setBookAccess(true);
     }
+    setRentFlow(true);
   };
   useEffect(() => {
     init();
@@ -88,9 +92,20 @@ const cardDetail = ({
               <p className="name">{name}</p>
             </div>
           </div>
-          <div className="wrapper">
-              <p className="name">{rate} SOL,  {maxMinConstraint}</p>
-          </div>
+
+          {rentFlow ? (
+            <div className="wrapper">
+              <p className="name">
+                {rate} SOL, {maxMinConstraint}
+              </p>
+            </div>
+          ) : (
+            <div className="wrapper">
+              <p className="name">
+                {sellPrice} SOL, {maxMinConstraint}
+              </p>
+            </div>
+          )}
 
           <div className="wrapper">
             <div className="info-container">

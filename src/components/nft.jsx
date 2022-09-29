@@ -158,7 +158,6 @@ const Card = ({ id, type, img, buttonValue }) => {
     if (!token) setErr("no token found");
     console.log(publicKey.toBase58());
     try {
-      console.log("request object : ", sellPrice);
       const resp = await initalizeEscrowHandler(
         getRate(timeScale, rate),
         connection,
@@ -373,7 +372,45 @@ const Card = ({ id, type, img, buttonValue }) => {
                         </select>
                       </div>
 
-                      {/* Rent Contract Type */}
+                      <div className="d-flex" FixedPrice>
+                        <h3 className="head w-30">Rent Price</h3>
+                        <input
+                          type="number"
+                          placeholder="Rate Price"
+                          className="input input-bordered input-accent "
+                          onChange={(e) => setRate(parseFloat(e.target.value))}
+                        />
+                        <select
+                          name="Unit"
+                          className="select select-info  "
+                          onChange={(e) => {
+                            setTimeScaleMaxBorrow(parseInt(e.target.value));
+                          }}
+                        >
+                          <option value="" disabled selected hidden>
+                            Unit
+                          </option>
+                          <option value={0}>Seconds</option>
+                          <option value={1}>Minutes</option>
+                          <option value={2}>Hours</option>
+                          <option value={3}>Days</option>
+                          <option value={4}>Weeks</option>
+                          <option value={5}>Months</option>
+                        </select>
+                        <select
+                          className="select select-info  "
+                          onChange={(e) => {
+                            "";
+                          }}
+                        >
+                          <option value="" disabled selected hidden>
+                            Curreny
+                          </option>
+                          <option value={0}>SOL</option>
+                          <option value={1}>USDC</option>
+                        </select>
+                      </div>
+                      {/* Rent Contract Type 
 
                       <div className="d-flex">
                         <h3 className="head w-30">Rent Contract Type</h3>
@@ -412,8 +449,9 @@ const Card = ({ id, type, img, buttonValue }) => {
                           Hybrid
                         </div>
                       </div>
+                    */}
 
-                      {/* Rent Price */}
+                      {/* Rent Price 
                       {(function () {
                         if (
                           rentType === "FixedPrice" ||
@@ -465,8 +503,8 @@ const Card = ({ id, type, img, buttonValue }) => {
                           );
                         }
                       })()}
-
-                      {/* Revenue Split */}
+*/}
+                      {/* Revenue Split 
 
                       {(function () {
                         if (
@@ -494,7 +532,7 @@ const Card = ({ id, type, img, buttonValue }) => {
                           );
                         }
                       })()}
-
+ */}
                       {/* Revocation Trigger */}
 
                       {(function () {

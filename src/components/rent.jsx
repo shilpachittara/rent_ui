@@ -72,55 +72,50 @@ const cancelRent = async (
   );
   //  const
   //const wallet = new KeyPairWallet(aliceKeyPair);
-    const xToken = new Token(
-      connection,
-      new PublicKey("8dv9xBuvv7czsX32tnkafSfi9d7Bh5y4Ly5stdGjEg5Z"),
-      TOKEN_PROGRAM_ID,
-      aliceKeyPair
-    );
+  const xToken = new Token(
+    connection,
+    new PublicKey("8dv9xBuvv7czsX32tnkafSfi9d7Bh5y4Ly5stdGjEg5Z"),
+    TOKEN_PROGRAM_ID,
+    aliceKeyPair
+  );
 
-    const currentState = await getMetadata(connection, token);
-    const associatedOwnersTokenAddress = await (
-      await xToken.getOrCreateAssociatedAccountInfo(
-        new PublicKey(currentState.getState().initializerPubkey)
-      )
-    ).address;
-    const associatedBorrowerTokenAddress = await (
-      await xToken.getOrCreateAssociatedAccountInfo(
-        new PublicKey(currentState.getState().borrower)
-      )
-    ).address;
+  const currentState = await getMetadata(connection, token);
+  const associatedOwnersTokenAddress = await (
+    await xToken.getOrCreateAssociatedAccountInfo(
+      new PublicKey(currentState.getState().initializerPubkey)
+    )
+  ).address;
+  const associatedBorrowerTokenAddress = await (
+    await xToken.getOrCreateAssociatedAccountInfo(
+      new PublicKey(currentState.getState().borrower)
+    )
+  ).address;
 
-    // const associatedPdaTokenAddress = await (
-    //   await Token.getAssociatedTokenAddress(currentState.getPda())
-    // ).address;
-    //console.log(currentState.getPda().toBase58());
-    const associatedPdaTokenAddress = await connection.getTokenAccountsByOwner(
-      currentState.getPda(),
-      {
-        mint: new PublicKey("8dv9xBuvv7czsX32tnkafSfi9d7Bh5y4Ly5stdGjEg5Z"),
-      }
-    );
-    console.log("here");
-    console.log(
-      token
-    );
+  // const associatedPdaTokenAddress = await (
+  //   await Token.getAssociatedTokenAddress(currentState.getPda())
+  // ).address;
+  //console.log(currentState.getPda().toBase58());
+  const associatedPdaTokenAddress = await connection.getTokenAccountsByOwner(
+    currentState.getPda(),
+    {
+      mint: new PublicKey("8dv9xBuvv7czsX32tnkafSfi9d7Bh5y4Ly5stdGjEg5Z"),
+    }
+  );
 
-    const resp = await withdrawTx({
-      token,
-      programId: config.DEVNET_PROGRAM_ID,
-      connection,
-    });
-    const txId = await sendTransaction({
-      connection,
-      wallet,
-      txs: resp.tx,
-      signers: [],
-      options: { skipPreflight: false, preflightCommitment: "confirmed" },
-    });
+  const resp = await withdrawTx({
+    token,
+    programId: config.DEVNET_PROGRAM_ID,
+    connection,
+  });
+  const txId = await sendTransaction({
+    connection,
+    wallet,
+    txs: resp.tx,
+    signers: [],
+    options: { skipPreflight: false, preflightCommitment: "confirmed" },
+  });
 
-    return `withdrawEscrowTx Completed: ${txId}`;
-  
+  return `withdrawEscrowTx Completed: ${txId}`;
 };
 
 const withdrawHandler = async (
@@ -153,10 +148,11 @@ const Rent = ({ id, selection, type }) => {
   const [err, setErr] = useState(null);
   const [log, setLog] = useState(null);
   const [bill, setBill] = useState(0);
-  const [time, setTime] = useState(0);
+  const [time, setTime] = useState(70);
   const [timeScale, setScale] = useState(0);
-  const [maxMinConstraint, setMaxMinConstraint] = useState("");
+  const [maxMinConstraint, setMaxMinConstraint] = useState(0);
   const [rate, setRate] = useState(0);
+  const [sellPrice, setSellPrice] = useState(0);
   const [buy, setBuy] = useState(0);
   const [withdrawButton, setWithdrawButton] = useState(false);
   const [escrowState, setEscrowState] = useState(null);
@@ -167,12 +163,22 @@ const Rent = ({ id, selection, type }) => {
     setLog(null);
     try {
       const currentState = await getMetadata(connection, token);
+      let amount = 0;
       //console.log(parseInt(time));
-      const amount = new BN(
-        (currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL) *
+      if(sellPrice > 0){
+      amount = new BN(
+        (currentState.getState().sellPrice.toNumber() / LAMPORTS_PER_SOL) *
           parseInt(time) *
           LAMPORTS_PER_SOL
       );
+      }
+      else{
+        amount = new BN(
+          (currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL) *
+            parseInt(time) *
+            LAMPORTS_PER_SOL
+        );
+      }
       //console.log(amount.toNumber());
 
       const BNtime = new BN(time);
@@ -220,11 +226,7 @@ const Rent = ({ id, selection, type }) => {
     if (!token) setErr("no token found");
     console.log(publicKey.toBase58());
     try {
-      const resp = await withdrawHandler(
-        connection,
-        new PublicKey(token),
-        w
-      );
+      const resp = await withdrawHandler(connection, new PublicKey(token), w);
       setLog(resp);
     } catch (error) {
       console.log(error);
@@ -252,8 +254,8 @@ const Rent = ({ id, selection, type }) => {
   };
   const setConstraints = async (id) => {
     const currentState = await getMetadata(connection, id);
-    console.log(currentState);
     setRate(currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL);
+    setSellPrice(currentState.getState().sellPrice.toNumber() / LAMPORTS_PER_SOL);
     setMaxMinConstraint(
       `${currentState
         .getState()
@@ -335,8 +337,17 @@ const Rent = ({ id, selection, type }) => {
                     ""
                   )}
 
-                  <div>Rate</div>
-                  <div> {rate} SOL/s</div>
+                  {rentFlow ? (
+                    <>
+                      <div>Rate</div>
+                      <div> {rate} SOL/s</div>
+                    </>
+                  ) : (
+                    <>
+                      <div>Rate</div>
+                      <div> {sellPrice} SOL/s</div>
+                    </>
+                  )}
 
                   {type === "rent" ? (
                     <>
@@ -385,7 +396,7 @@ const Rent = ({ id, selection, type }) => {
                 ) : (
                   <div className="justify-end card-actions">
                     <button className="btn" onClick={initRent}>
-                      Buy It for {rate} SOL!!!
+                      Buy It for {sellPrice} SOL!!!
                     </button>
                   </div>
                 )}
