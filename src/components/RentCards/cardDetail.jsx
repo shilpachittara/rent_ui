@@ -53,10 +53,6 @@ const cardDetail = ({
   const setConstraints = async (id) => {
     const currentState = await getMetadata(connection, id);
     setRate(currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL);
-    if (currentState.getState().sellPrice.toNumber() > 0) {
-      setRate(currentState.getState().sellPrice.toNumber() / LAMPORTS_PER_SOL);
-      setButton("Buy");
-    }
 
     setMaxMinConstraint(
       `${currentState
@@ -65,6 +61,11 @@ const cardDetail = ({
         .getState()
         .maxBorrowDuration.toNumber()} s`
     );
+    if (currentState.getState().sellPrice.toNumber() > 0) {
+      setRate(currentState.getState().sellPrice.toNumber() / LAMPORTS_PER_SOL);
+      setButton("Buy");
+      setMaxMinConstraint("");
+    }
   };
 
   const init = () => {
@@ -135,7 +136,7 @@ const cardDetail = ({
             </>
             <>
               {" "}
-              {buttonValue && button === "Rent"? (
+              {buttonValue && button === "Rent" ? (
                 <div className="buttons">
                   <button className="buy-now" onClick={onClick}>
                     {buttonValue}
