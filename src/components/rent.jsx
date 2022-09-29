@@ -123,11 +123,46 @@ const withdrawHandler = async (
   token: PublicKey,
   wallet: WalletContextState
 ) => {
-  const resp = await withdrawTx({
+
+  const aliceKeyPair = Keypair.fromSecretKey(
+    Uint8Array.from([
+      195, 191, 15, 17, 39, 92, 168, 10, 175, 227, 147, 88, 14, 192, 77, 136,
+      102, 19, 132, 142, 77, 98, 252, 183, 252, 102, 196, 54, 249, 169, 74, 202,
+      97, 65, 119, 17, 170, 211, 184, 3, 4, 229, 79, 30, 245, 219, 131, 191,
+      241, 173, 133, 144, 78, 108, 6, 10, 84, 173, 212, 220, 61, 82, 87, 248,
+    ])
+  );
+
+  const xToken = new Token(
+    connection,
+    new PublicKey("8dv9xBuvv7czsX32tnkafSfi9d7Bh5y4Ly5stdGjEg5Z"),
+    TOKEN_PROGRAM_ID,
+    aliceKeyPair
+  );
+
+  const currentState = await getMetadata(connection, token);
+  const associatedOwnersTokenAddress = await (
+    await xToken.getOrCreateAssociatedAccountInfo(
+      new PublicKey(currentState.getState().initializerPubkey)
+    )
+  ).address;
+  const associatedBorrowerTokenAddress = await (
+    await xToken.getOrCreateAssociatedAccountInfo(
+      new PublicKey(currentState.getState().borrower)
+    )
+  ).address;
+
+  const associatedPdaTokenAddress = new PublicKey("8dv9xBuvv7czsX32tnkafSfi9d7Bh5y4Ly5stdGjEg5Z")
+  
+  try{  const resp = await withdrawTx({
     token,
+    associatedPdaTokenAddress,
+    associatedBorrowerTokenAddress,
+    associatedOwnersTokenAddress,
     programId: config.DEVNET_PROGRAM_ID,
     connection,
   });
+
   const txId = await sendTransaction({
     connection,
     wallet,
@@ -136,6 +171,11 @@ const withdrawHandler = async (
     options: { skipPreflight: false, preflightCommitment: "confirmed" },
   });
   return `withdrawEscrowTx Completed: ${txId}`;
+
+}
+catch(e){
+  console.log(e)
+}
 };
 
 // TO DO add logic for buy
@@ -224,7 +264,7 @@ const Rent = ({ id, selection, type }) => {
       return;
     }
     if (!token) setErr("no token found");
-    console.log(publicKey.toBase58());
+    //console.log(publicKey.toBase58());
     try {
       const resp = await withdrawHandler(connection, new PublicKey(token), w);
       setLog(resp);
