@@ -14,6 +14,18 @@ import Modal from "@material-ui/core/Modal";
 
 import Hamburger from "hamburger-react";
 
+import { queryTokenState, config } from "stream-nft";
+import { Connection, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+
+const getMetadata = async (connection: Connection, token: string) => {
+  return await queryTokenState({
+    programId: config.DEVNET_PROGRAM_ID,
+    tokenAddress: new PublicKey(token),
+    connection,
+  });
+};
+
 const cardDetail = ({
   id,
   name,
@@ -43,6 +55,11 @@ const cardDetail = ({
   const [openSell, setOpenSell] = React.useState(false);
   const [isOpen, Open] = useState(false);
   const [isOpenSell, OpenSell] = useState(false);
+  const { connection } = useConnection();
+  const w = useWallet();
+  const [maxMinConstraint, setMaxMinConstraint] = useState("0 s");
+  const [rate, setRate] = useState(0);
+
 
   const handleClose = () => {
     setOpen(false);
@@ -60,7 +77,20 @@ const cardDetail = ({
     setOpenSell(false);
   };
 
+  const setConstraints = async (id) => {
+    const currentState = await getMetadata(connection, id);
+    setRate(currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL);
+    setMaxMinConstraint(
+      `${currentState
+        .getState()
+        .minBorrowDuration.toNumber()} s - ${currentState
+        .getState()
+        .maxBorrowDuration.toNumber()} s`
+    );
+  };
+
   useEffect(() => {
+    setConstraints(id)
     if (status === "Owned") {
       setSell(true);
     }
@@ -90,6 +120,10 @@ const cardDetail = ({
               <p className="owner"> {}</p>
               <p className="name">{name}</p>
             </div>
+          </div>
+
+          <div className="wrapper">
+              <p className="name">{rate} SOL,  {maxMinConstraint}</p>
           </div>
 
           <div className="wrapper">

@@ -46,6 +46,7 @@ const CardList = ({ list, type = "horizontal"}) => {
         <>
           <CardDetail
             nftUri={item.data.image}
+            id={item.id}
             name={item.data.name}
             status={item.listed ? "Rented" : "Listed"}
             buttonValue={item.listed ? "withdraw" : "Rent"}

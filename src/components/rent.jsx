@@ -252,6 +252,7 @@ const Rent = ({ id, selection, type }) => {
   };
   const setConstraints = async (id) => {
     const currentState = await getMetadata(connection, id);
+    console.log(currentState);
     setRate(currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL);
     setMaxMinConstraint(
       `${currentState

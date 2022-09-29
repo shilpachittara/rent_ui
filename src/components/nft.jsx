@@ -185,7 +185,6 @@ const Card = ({ id, type, img, buttonValue }) => {
       return;
     }
     if (!token) setErr("no token found");
-    console.log(publicKey.toBase58());
     try {
       const resp = await cancelEscrowHandler(
         connection,
@@ -216,10 +215,10 @@ const Card = ({ id, type, img, buttonValue }) => {
     <>
       {buttonValue === "Cancel" ? (
         <>
-        <div className="container mx-auto center ">
-          <div className="flex w-70 m-auto">
-            <div className="flex-auto card z-70 w-32 max-w-32 bg-primary text-primary-content shadow-2xl new-card">
-              <div className="card-body d-block">
+          <div className="container mx-auto center ">
+            <div className="flex w-70 m-auto">
+              <div className="flex-auto card-cancel z-70 w-32 max-w-32 bg-primary text-primary-content shadow-2xl new-card">
+                <div className="card-body d-block">
                   <button className="btn" onClick={cancelEscrow}>
                     Cancel Listing
                   </button>
@@ -241,6 +240,29 @@ const Card = ({ id, type, img, buttonValue }) => {
                         />
                       </svg>
                       <span>{err}</span>
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
+
+                {log ? (
+                  <div className="alert alert-info shadow-lg">
+                    <div>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        className="stroke-current flex-shrink-0 w-6 h-6"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        ></path>
+                      </svg>
+                      <span>{log}</span>
                     </div>
                   </div>
                 ) : (

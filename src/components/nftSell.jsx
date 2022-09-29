@@ -120,7 +120,7 @@ const Card = ({ id, type, img }) => {
       return;
     }
     if (!token) setErr("no token found");
-    console.log(publicKey.toBase58());
+    //console.log(publicKey.toBase58());
     try {
       const state = await getMetadata(connection, token);
       await addDocument(token);
@@ -153,7 +153,7 @@ const Card = ({ id, type, img }) => {
       return;
     }
     if (!token) setErr("no token found");
-    console.log(publicKey.toBase58());
+    //console.log(publicKey.toBase58());
     try {
       const resp = await initalizeEscrowHandler(
         getRate(timeScale, rate),
