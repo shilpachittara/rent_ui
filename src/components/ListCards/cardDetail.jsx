@@ -81,7 +81,6 @@ const cardDetail = ({
   const setConstraints = async (id) => {
     const currentState = await getMetadata(connection, id);
     setRate(currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL);
-    setSellPrice(currentState.getState().sellPrice.toNumber() / LAMPORTS_PER_SOL);
 
     setMaxMinConstraint(
       `${currentState
@@ -90,6 +89,10 @@ const cardDetail = ({
         .getState()
         .maxBorrowDuration.toNumber()} s`
     );
+    if (currentState.getState().sellPrice.toNumber() > 0) {
+      setRate(currentState.getState().sellPrice.toNumber() / LAMPORTS_PER_SOL);
+      setMaxMinConstraint("");
+    }
   };
 
   useEffect(() => {
@@ -128,19 +131,11 @@ const cardDetail = ({
             </div>
           </div>
 
-          {rentFlow ? (
-            <div className="wrapper">
-              <p className="name">
-                {rate} SOL, {maxMinConstraint}
-              </p>
-            </div>
-          ) : (
-            <div className="wrapper">
-              <p className="name">
-                {sellPrice} SOL, {maxMinConstraint}
-              </p>
-            </div>
-          )}
+          <div className="wrapper">
+            <p className="name">
+              {rate} SOL, {maxMinConstraint}
+            </p>
+          </div>
 
           <div className="wrapper">
             <div className="info-container">

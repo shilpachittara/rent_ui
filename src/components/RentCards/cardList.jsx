@@ -21,7 +21,6 @@ const CardList = ({ list, type = "horizontal"}) => {
     }
   }
   const openbuy = (item) => {
-    console.log("item : ", item)
     setOpenList(false)
     setListItem(item)
     setOpenSelected('buy')

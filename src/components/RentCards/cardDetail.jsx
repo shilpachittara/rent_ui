@@ -40,9 +40,9 @@ const cardDetail = ({
   const w = useWallet();
   const [maxMinConstraint, setMaxMinConstraint] = useState("0 s");
   const [rate, setRate] = useState(0);
+  const [button, setButton] = useState("Rent");
+  const [rentFlow, setRentFlow] = useState(true);
 
-  const [sellPrice, setSellPrice] = useState(0);
-  const [rentFlow, setRentFlow] = useState(false);
   const like = () => setIsLike(!isLike);
 
   const getColors = (colors) => {
@@ -53,7 +53,11 @@ const cardDetail = ({
   const setConstraints = async (id) => {
     const currentState = await getMetadata(connection, id);
     setRate(currentState.getState().rate.toNumber() / LAMPORTS_PER_SOL);
-    setSellPrice(currentState.getState().sellPrice.toNumber() / LAMPORTS_PER_SOL);
+    if (currentState.getState().sellPrice.toNumber() > 0) {
+      setRate(currentState.getState().sellPrice.toNumber() / LAMPORTS_PER_SOL);
+      setButton("Buy");
+    }
+
     setMaxMinConstraint(
       `${currentState
         .getState()
@@ -70,7 +74,6 @@ const cardDetail = ({
     if ("Rented" === status) {
       setBookAccess(true);
     }
-    setRentFlow(true);
   };
   useEffect(() => {
     init();
@@ -93,19 +96,11 @@ const cardDetail = ({
             </div>
           </div>
 
-          {rentFlow ? (
-            <div className="wrapper">
-              <p className="name">
-                {rate} SOL, {maxMinConstraint}
-              </p>
-            </div>
-          ) : (
-            <div className="wrapper">
-              <p className="name">
-                {sellPrice} SOL, {maxMinConstraint}
-              </p>
-            </div>
-          )}
+          <div className="wrapper">
+            <p className="name">
+              {rate} SOL, {maxMinConstraint}
+            </p>
+          </div>
 
           <div className="wrapper">
             <div className="info-container">
@@ -115,7 +110,7 @@ const cardDetail = ({
 
             <>
               {" "}
-              {buy ? (
+              {buy && button === "Buy" ? (
                 <div className="buttons">
                   <button className="buy-now" onClick={onClickBuy}>
                     Buy
@@ -140,17 +135,14 @@ const cardDetail = ({
             </>
             <>
               {" "}
-              {buttonValue ? (
+              {buttonValue && button === "Rent"? (
                 <div className="buttons">
                   <button className="buy-now" onClick={onClick}>
                     {buttonValue}
                   </button>
                 </div>
               ) : (
-                <div className="price-container">
-                  <p className="price-label">Price</p>
-                  <p className="price"> {price}</p>
-                </div>
+                <></>
               )}
             </>
           </div>

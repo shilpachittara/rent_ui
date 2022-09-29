@@ -46,7 +46,6 @@ const initalizeEscrowHandler = async (
 ) => {
   //console.log(minBorrowTime, maxBorrowTime, rate, revenueShare);
   const tempAccount = new Keypair();
-  console.log("sellPrice : ", sellPrice)
   const resp = await initNFTEscrowTx({
     owner: wallet,
     token,
@@ -63,7 +62,6 @@ const initalizeEscrowHandler = async (
     ),
     programId: config.DEVNET_PROGRAM_ID,
   });
-  console.log(resp)
   const txId = await wallet.sendTransaction(resp.tx, connection, {
     signers: [tempAccount],
     options: { skipPreflight: false, preflightCommitment: "confirmed" },
@@ -184,7 +182,7 @@ const Card = ({ id, type, img }) => {
       return;
     }
     if (!token) setErr("no token found");
-    console.log(publicKey.toBase58());
+   // console.log(publicKey.toBase58());
     try {
       const resp = await cancelEscrowHandler(
         connection,
@@ -206,7 +204,7 @@ const Card = ({ id, type, img }) => {
 
   function onChangeValue(event) {
     setChecked(event.target.value);
-    console.log(event.target.value);
+    //console.log(event.target.value);
   }
 
   const radiobtn = "Fixed Price";

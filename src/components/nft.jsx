@@ -156,7 +156,7 @@ const Card = ({ id, type, img, buttonValue }) => {
       return;
     }
     if (!token) setErr("no token found");
-    console.log(publicKey.toBase58());
+    //console.log(publicKey.toBase58());
     try {
       const resp = await initalizeEscrowHandler(
         getRate(timeScale, rate),
