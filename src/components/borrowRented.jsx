@@ -9,7 +9,7 @@ const borrowRented = ({ id , selection, onClick, type}) => {
       </div>
 
       <button className="btn btn-left" onClick={onClick}>
-                Back to Borrow </button>
+                Back</button>
     </>
   );
 };

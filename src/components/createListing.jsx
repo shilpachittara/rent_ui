@@ -11,7 +11,7 @@ const CreateListing = ({ id ,type, onClick}) => {
       </div>
 
       <button className="btn btn-left" onClick={onClick}>
-                Back to Listing </button>
+                Back</button>
     </>
   );
 };
