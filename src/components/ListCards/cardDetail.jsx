@@ -34,6 +34,7 @@ const cardDetail = ({
   price,
   buttonValue,
   nftUri,
+  getBookLink,
   likeCount,
   gradient,
   onClick,
@@ -135,14 +136,17 @@ const cardDetail = ({
             <p className="name">
               {rate} SOL, {maxMinConstraint}
             </p>
+            <p className="name">{status}</p>
           </div>
 
           <div className="wrapper">
-            <div className="info-container">
-              <p className="owner"> {}</p>
-              <p className="name">{status}</p>
-            </div>
-
+            <>
+                <div className="buttons">
+                  <button className="buy-now" onClick={getBookLink}>
+                    Read
+                  </button>
+                </div>
+              </>
             <>
               {sell ? (
                 <div className="buttons">

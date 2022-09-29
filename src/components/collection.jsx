@@ -51,7 +51,7 @@ const collection = ({ onClick }) => {
               style={{ width: "s200px" }}
               onClick={() => handleBorrow()}
             >
-              Borrow
+              Manage
             </a>
           </div>
         </div>
