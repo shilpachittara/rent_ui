@@ -27,6 +27,15 @@ const CardList = ({ list, type = "horizontal" }) => {
   const open = () => {
     setOpenList(true);
   };
+  const readbook =(item) => {
+    console.log(item , "read")
+    const found = item.attributes.find(obj => {
+      return obj.trait_type === "url";
+    });
+    const url = found.value;
+      window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
   return (
     <>
       {" "}
@@ -40,6 +49,7 @@ const CardList = ({ list, type = "horizontal" }) => {
             price={list.sellerFeeBasisPoints}
             onClick={() => openlist(list)}
             onClickSell={() => openSell(list)}
+            getBookLink={()=>readbook(list)}
           />
       ) : (
         <CreateListing id={listItem.id} onClick={open} type={selectionType} />
