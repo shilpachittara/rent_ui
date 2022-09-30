@@ -28,7 +28,6 @@ const CardList = ({ list, type = "horizontal" }) => {
     setOpenList(true);
   };
   const readbook =(item) => {
-    console.log(item , "read")
     const found = item.attributes.find(obj => {
       return obj.trait_type === "url";
     });
